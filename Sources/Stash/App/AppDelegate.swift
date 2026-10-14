@@ -7,7 +7,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private let panelController = PanelController()
     /// Nil only if the library folder or its index couldn't be opened.
     private(set) var library: LibraryStore?
-    private lazy var settingsWindowController = SettingsWindowController()
+
+    private lazy var settingsWindowController = SettingsWindowController(
+        model: SettingsModel(
+            library: { [weak self] in self?.library },
+            switchLibrary: { [weak self] url in try self?.switchLibrary(to: url) }
+        ),
+        onShowMenuBarIconChange: { [weak self] show in self?.menuBarController?.isVisible = show }
+    )
 
     func applicationWillFinishLaunching(_ notification: Notification) {
         // Info.plist sets LSUIElement for the bundled app; this also covers `swift run`.
@@ -17,6 +24,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         menuBarController = MenuBarController(target: self)
+        menuBarController?.isVisible = Preferences.showMenuBarIcon
         loadLibrary()
 
         KeyboardShortcuts.onKeyDown(for: .capture) { [weak self] in
@@ -26,6 +34,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             self?.panelController.toggle(.library)
         }
 
+        showWelcomeOnce()
+
         // Developer aid: `open build/Stash.app --args -StashShowPanel library` opens the panel at launch.
         switch UserDefaults.standard.string(forKey: "StashShowPanel") {
         case "capture": panelController.toggle(.capture)
@@ -34,10 +44,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
 
         #if DEBUG
-        DebugHooks.install(panel: panelController)
+        DebugHooks.install(panel: panelController) { [weak self] in self?.openSettings(nil) }
         #endif
     }
-
 
     /// Opening the app again (e.g. from Finder) shows Settings, so it stays reachable
     /// even if the menu bar icon is hidden.
@@ -46,16 +55,44 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         return false
     }
 
+    // MARK: Library
+
     /// Opens the library folder and its index, then keeps the index in sync with the folder.
     private func loadLibrary() {
         do {
-            let library = try LibraryStore.openDefault()
-            library.startWatching()
-            library.scheduleSync()
-            self.library = library
-            panelController.library = library
+            use(try LibraryStore.openDefault())
         } catch {
             presentError(error)
+        }
+    }
+
+    /// Settings › Library › Choose…: from now on the library lives at `url`.
+    func switchLibrary(to url: URL) throws {
+        library?.stopWatching()
+        let store = if let index = library?.index {
+            try LibraryStore(root: url, index: index)
+        } else {
+            try LibraryStore.openDefault(root: url)
+        }
+        Preferences.setLibraryURL(url)
+        use(store)
+    }
+
+    private func use(_ store: LibraryStore) {
+        store.startWatching()
+        store.scheduleSync()
+        library = store
+        panelController.library = store
+    }
+
+    // MARK: First launch
+
+    /// Once: where Stash lives and how to capture.
+    private func showWelcomeOnce() {
+        guard !UserDefaults.standard.bool(forKey: Preferences.Key.didShowWelcome) else { return }
+        UserDefaults.standard.set(true, forKey: Preferences.Key.didShowWelcome)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
+            HUDController.shared.show(.welcome(keys: KeyboardShortcuts.Name.capture.keycaps), hold: Motion.welcomeHold)
         }
     }
 

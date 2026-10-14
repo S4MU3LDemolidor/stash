@@ -71,11 +71,22 @@ struct LibrarySync: Sendable {
         let urls = (try? FileManager.default.contentsOfDirectory(
             at: items,
             includingPropertiesForKeys: keys,
-            options: [.skipsHiddenFiles]
+            options: []
         )) ?? []
 
         var files: [String: (url: URL, stamp: FileStamp, created: Date?)] = [:]
-        for url in urls where url.pathExtension.lowercased() == "md" {
+        for url in urls {
+            let name = url.lastPathComponent
+            if name.hasPrefix(".") {
+                // iCloud Drive keeps only a placeholder (".name.md.icloud") for files not downloaded
+                // yet: ask for them. They're indexed once they arrive (the folder watcher sees it).
+                if name.hasSuffix(".md.icloud") {
+                    let real = items.appending(path: String(name.dropFirst().dropLast(".icloud".count)))
+                    try? FileManager.default.startDownloadingUbiquitousItem(at: real)
+                }
+                continue
+            }
+            guard url.pathExtension.lowercased() == "md" else { continue }
             guard let values = try? url.resourceValues(forKeys: Set(keys)), values.isRegularFile == true else { continue }
             files["items/" + url.lastPathComponent] = (url, Self.stamp(values), values.creationDate)
         }

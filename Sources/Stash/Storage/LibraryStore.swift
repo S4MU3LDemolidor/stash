@@ -48,14 +48,15 @@ final class LibraryStore {
         reloadSiteIcons()
     }
 
-    /// The library at `Preferences.libraryURL`, indexed in `~/Library/Application Support/Stash/`.
-    static func openDefault() throws -> LibraryStore {
+    /// The library at `root` (default: `Preferences.libraryURL`), indexed in
+    /// `~/Library/Application Support/Stash/`.
+    static func openDefault(root: URL = Preferences.libraryURL) throws -> LibraryStore {
         let support = try FileManager.default
             .url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
             .appending(path: "Stash", directoryHint: .isDirectory)
         try FileManager.default.createDirectory(at: support, withIntermediateDirectories: true)
         let index = try SearchIndex(path: support.appending(path: "index.sqlite").path)
-        return try LibraryStore(root: Preferences.libraryURL, index: index)
+        return try LibraryStore(root: root, index: index)
     }
 
     nonisolated static func moveToTrash(_ url: URL) throws {
@@ -169,6 +170,11 @@ final class LibraryStore {
         watcher = FileWatcher(url: root) { [weak self] in
             MainActor.assumeIsolated { self?.scheduleSync() }
         }
+    }
+
+    func stopWatching() {
+        watcher?.stop()
+        watcher = nil
     }
 
     /// Syncs the index with the folder in the background. Calls made while a sync is

@@ -46,6 +46,11 @@ final class StashPanel: NSPanel {
         if modifiers == .command, let key = event.charactersIgnoringModifiers, ["q", "h"].contains(key) {
             return true
         }
+        // ⌘W closes the panel, like Esc.
+        if modifiers == .command, event.charactersIgnoringModifiers == "w" {
+            onCancel?()
+            return true
+        }
         if onKeyEquivalent?(event) == true {
             return true
         }

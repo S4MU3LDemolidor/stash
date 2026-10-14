@@ -162,6 +162,9 @@ enum Metrics {
     static let hudPadding: CGFloat = 14
     /// Distance of the HUD from the bottom of the visible screen area.
     static let hudBottomOffset: CGFloat = 96
+
+    // Settings window
+    static let settingsWidth: CGFloat = 480
     static let emptyIconSize: CGFloat = 32
 }
 
@@ -180,4 +183,6 @@ enum Motion {
     static let thumbnailFade: TimeInterval = 0.15
     /// One sweep of the loading shimmer.
     static let shimmer: TimeInterval = 1.2
+    /// The first-launch hint stays up longer than the Saved HUD.
+    static let welcomeHold: TimeInterval = 4
 }

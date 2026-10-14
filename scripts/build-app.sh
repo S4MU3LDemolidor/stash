@@ -22,6 +22,8 @@ mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources"
 
 cp "$BIN_DIR/$APP_NAME" "$APP/Contents/MacOS/$APP_NAME"
 cp Support/Info.plist "$APP/Contents/Info.plist"
+# Placeholder icon; regenerate with: swift scripts/make-icon.swift
+cp Support/AppIcon.icns "$APP/Contents/Resources/AppIcon.icns"
 /usr/libexec/PlistBuddy \
     -c "Set :CFBundleShortVersionString $VERSION" \
     -c "Set :CFBundleVersion $BUILD_NUMBER" \

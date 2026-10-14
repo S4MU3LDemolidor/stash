@@ -8,6 +8,8 @@
 	<string>Stash</string>
 	<key>CFBundleExecutable</key>
 	<string>Stash</string>
+	<key>CFBundleIconFile</key>
+	<string>AppIcon</string>
 	<key>CFBundleIdentifier</key>
 	<string>dev.stash.app</string>
 	<key>CFBundleInfoDictionaryVersion</key>

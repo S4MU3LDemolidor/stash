@@ -5,15 +5,19 @@ import Carbon.HIToolbox
 /// Debug builds only: lets scripts drive the panel the way a user would, without accessibility
 /// permissions (the events never leave Stash). Used to check focus handling and the keyboard map.
 ///
-/// - `dev.stash.debug.toggle`, object `"capture"` or `"library"`: like pressing the shortcut.
+/// - `dev.stash.debug.toggle`, object `"capture"` or `"library"`: like pressing the shortcut;
+///   `"settings"` opens Settings.
 /// - `dev.stash.debug.keys`, object e.g. `"text:hoo down cmd+k esc"`: key presses, in order.
 @MainActor
 enum DebugHooks {
-    static func install(panel: PanelController) {
+    static func install(panel: PanelController, openSettings: @escaping () -> Void) {
         let center = DistributedNotificationCenter.default()
         center.addObserver(forName: Notification.Name("dev.stash.debug.toggle"), object: nil, queue: .main) { [weak panel] note in
-            let mode: PanelMode = (note.object as? String) == "library" ? .library : .capture
-            MainActor.assumeIsolated { panel?.toggle(mode) }
+            let target = note.object as? String
+            MainActor.assumeIsolated {
+                if target == "settings" { return openSettings() }
+                panel?.toggle(target == "library" ? .library : .capture)
+            }
         }
         center.addObserver(forName: Notification.Name("dev.stash.debug.keys"), object: nil, queue: .main) { [weak panel] note in
             let script = note.object as? String ?? ""

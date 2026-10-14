@@ -9,6 +9,7 @@ enum MainMenu {
         let mainMenu = NSMenu()
         mainMenu.addItem(submenuItem(appMenu(target: target)))
         mainMenu.addItem(submenuItem(editMenu()))
+        mainMenu.addItem(submenuItem(windowMenu()))
         return mainMenu
     }
 
@@ -27,6 +28,13 @@ enum MainMenu {
 
         menu.addItem(.separator())
         menu.addItem(NSMenuItem(title: "Quit Stash", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q"))
+        return menu
+    }
+
+    /// ⌘W closes the Settings window.
+    private static func windowMenu() -> NSMenu {
+        let menu = NSMenu(title: "Window")
+        menu.addItem(NSMenuItem(title: "Close", action: #selector(NSWindow.performClose(_:)), keyEquivalent: "w"))
         return menu
     }
 

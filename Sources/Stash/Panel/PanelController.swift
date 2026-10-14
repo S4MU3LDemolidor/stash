@@ -89,6 +89,7 @@ final class PanelController: NSObject {
         sourceApp = frontmost?.bundleIdentifier == Bundle.main.bundleIdentifier ? nil : frontmost
 
         state.prepareForShow(mode: mode)
+        updateAccessibilityTitle(for: mode)
         captureStarted = false
         capture.reset()
         libraryController.reset()
@@ -119,6 +120,7 @@ final class PanelController: NSObject {
         libraryController.closeActionMenu()
         state.mode = mode
         state.refocus()
+        updateAccessibilityTitle(for: mode)
         if mode == .capture, !captureStarted { startCapture() }
 
         // Keep the top edge fixed; the panel grows or shrinks downwards (150 ms, design.md §7).
@@ -155,6 +157,11 @@ final class PanelController: NSObject {
     /// Whether text is selected in the focused text field (then ⌘C copies that text).
     var hasSelectedText: Bool {
         ((panel.firstResponder as? NSTextView)?.selectedRange().length ?? 0) > 0
+    }
+
+    /// VoiceOver announces the panel as "Stash Capture" or "Stash Library".
+    private func updateAccessibilityTitle(for mode: PanelMode) {
+        panel.setAccessibilityTitle(mode == .capture ? "Stash Capture" : "Stash Library")
     }
 
     private func startCapture() {

@@ -1,7 +1,7 @@
 import Foundation
 import KeyboardShortcuts
 
-/// User preferences, stored in UserDefaults. The Settings window for them arrives in M6.
+/// User preferences, stored in UserDefaults. Edited in the Settings window.
 enum Preferences {
     enum Key {
         /// Path of the library folder (`~` allowed). Also settable for one run with
@@ -11,6 +11,8 @@ enum Preferences {
         static let clipboardWindow = "clipboardWindow"
         /// Whether to fetch titles, thumbnails and icons for saved links (the only network use).
         static let fetchMetadata = "fetchMetadata"
+        static let showMenuBarIcon = "showMenuBarIcon"
+        static let didShowWelcome = "didShowWelcome"
     }
 
     /// Default on. When off, Stash makes no network requests at all.
@@ -23,6 +25,10 @@ enum Preferences {
         UserDefaults.standard.object(forKey: Key.clipboardWindow) as? TimeInterval ?? 60
     }
 
+    static var showMenuBarIcon: Bool {
+        UserDefaults.standard.object(forKey: Key.showMenuBarIcon) as? Bool ?? true
+    }
+
     /// The library folder: `libraryPath` if set, otherwise `~/Stash`.
     static var libraryURL: URL {
         if let path = UserDefaults.standard.string(forKey: Key.libraryPath), !path.isEmpty {
@@ -30,6 +36,10 @@ enum Preferences {
         }
         return FileManager.default.homeDirectoryForCurrentUser
             .appending(path: "Stash", directoryHint: .isDirectory)
+    }
+
+    static func setLibraryURL(_ url: URL) {
+        UserDefaults.standard.set((url.path as NSString).abbreviatingWithTildeInPath, forKey: Key.libraryPath)
     }
 
     /// The library folder for display, e.g. `~/Stash`.
@@ -41,4 +51,17 @@ enum Preferences {
 extension KeyboardShortcuts.Name {
     static let capture = Self("capture", default: .init(.s, modifiers: [.option, .shift]))
     static let library = Self("library", default: .init(.l, modifiers: [.option, .shift]))
+}
+
+enum AppInfo {
+    /// `0.1.0 (12)`.
+    static var version: String {
+        let info = Bundle.main.infoDictionary
+        let version = info?["CFBundleShortVersionString"] as? String ?? "dev"
+        let build = info?["CFBundleVersion"] as? String
+        return build.map { "\(version) (\($0))" } ?? version
+    }
+
+    /// Where the source code lives.
+    static let repositoryURL = URL(string: "https://github.com/osamuelrc/stash")!
 }
