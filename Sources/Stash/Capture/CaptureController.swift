@@ -10,17 +10,13 @@ final class CaptureController: ObservableObject {
     }
 
     @Published private(set) var session = CaptureSession()
-    @Published private(set) var suggestions: [String] = []
-    @Published private(set) var selectedSuggestion = 0
     @Published var isDropTargeted = false
+    let autocomplete = TagAutocomplete()
 
     var library: LibraryStore?
 
-    private let clipboard = ClipboardMonitor()
+    private let clipboard = ClipboardMonitor.shared
     private let reader = BrowserTabReader.shared
-    private var knownTags: [String] = []
-    /// The note for which the user dismissed suggestions with Esc.
-    private var dismissedSuggestionsFor: String?
 
     init() {
         clipboard.start()
@@ -50,9 +46,7 @@ final class CaptureController: ObservableObject {
     func reset() {
         session.detection?.cancel()
         session = CaptureSession()
-        suggestions = []
-        dismissedSuggestionsFor = nil
-        knownTags = (try? library?.index.tags().map(\.name)) ?? []
+        autocomplete.reset(knownTags: (try? library?.index.tags().map(\.name)) ?? [])
     }
 
     /// Starts a capture: an image or file copied recently, else the browser's current tab,
@@ -173,24 +167,11 @@ final class CaptureController: ObservableObject {
     // MARK: Tag autocomplete
 
     func noteChanged(_ note: String) {
-        if note != dismissedSuggestionsFor { dismissedSuggestionsFor = nil }
-        suggestions = dismissedSuggestionsFor == nil ? TagSuggestions.suggestions(for: note, from: knownTags) : []
-        selectedSuggestion = 0
-    }
-
-    func moveSuggestion(by offset: Int) {
-        guard !suggestions.isEmpty else { return }
-        selectedSuggestion = (selectedSuggestion + offset + suggestions.count) % suggestions.count
+        autocomplete.update(for: note)
     }
 
     /// The note with the selected suggestion filled in, or nil if no suggestions are showing.
     func completeSuggestion(in note: String) -> String? {
-        guard suggestions.indices.contains(selectedSuggestion) else { return nil }
-        return TagSuggestions.complete(note, with: suggestions[selectedSuggestion])
-    }
-
-    func dismissSuggestions(for note: String) {
-        dismissedSuggestionsFor = note
-        suggestions = []
+        autocomplete.selectedTag.map { TagSuggestions.complete(note, with: $0) }
     }
 }

@@ -70,14 +70,39 @@ final class LibraryStore {
     /// Saves a new reference as `items/YYYY-MM-DD-slug.md` and returns it with its path set.
     @discardableResult
     func create(_ reference: Reference) throws -> Reference {
+        let saved = try createWithoutNotifying(reference)
+        notifyChange()
+        return saved
+    }
+
+    /// Saves several references with a single change notification (e.g. sample data).
+    @discardableResult
+    func create(_ references: [Reference]) throws -> [Reference] {
+        defer { notifyChange() }
+        return try references.map(createWithoutNotifying)
+    }
+
+    private func createWithoutNotifying(_ reference: Reference) throws -> Reference {
         var reference = reference
         let filename = Slug.filename(for: reference) { name in
             FileManager.default.fileExists(atPath: itemsURL.appending(path: name).path)
         }
         reference.markdownPath = "items/" + filename
         try write(reference)
-        notifyChange()
+        indexFileText(of: reference)
         return reference
+    }
+
+    /// Makes the text inside an attached file searchable, in the background.
+    private func indexFileText(of reference: Reference) {
+        guard reference.type == .file, let file = reference.file else { return }
+        let fileURL = url(for: file)
+        let index = self.index
+        let id = reference.id
+        Task.detached(priority: .utility) {
+            guard let text = FileTextExtractor.text(of: fileURL) else { return }
+            try? index.setFileText(text, id: id)
+        }
     }
 
     /// Changes a saved reference. The file keeps its name; its ID can't change.

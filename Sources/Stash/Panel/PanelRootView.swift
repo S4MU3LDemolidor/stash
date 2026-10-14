@@ -4,9 +4,13 @@ import SwiftUI
 struct PanelRootView: View {
     @ObservedObject var state: PanelState
     @ObservedObject var capture: CaptureController
+    @ObservedObject var library: LibraryController
     let onCommand: (PanelKeyCommand) -> Bool
+    let onMenuCommand: (PanelKeyCommand) -> Bool
+    let onClick: (Reference) -> Void
 
     @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     private var shape: RoundedRectangle {
         RoundedRectangle(cornerRadius: Metrics.panelCornerRadius, style: .continuous)
@@ -17,9 +21,16 @@ struct PanelRootView: View {
             searchBar
             content
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-            actionBar
+                .id(state.mode)
+                .transition(.opacity)
+            PanelActionBar(state: state, library: library)
         }
-        .overlay(alignment: .topLeading) { suggestions }
+        .animation(.easeInOut(duration: Motion.modeSwitch), value: state.mode)
+        .overlay(alignment: .topLeading) {
+            SuggestionsOverlay(autocomplete: state.mode == .capture ? capture.autocomplete : library.autocomplete)
+        }
+        .overlay(alignment: .bottomTrailing) { actionMenu }
+        .animation(.easeOut(duration: Motion.actionMenu), value: library.isActionMenuOpen)
         .background(reduceTransparency ? Palette.tint.opaque : Palette.tint)
         .clipShape(shape)
         .overlay(shape.strokeBorder(Palette.border, lineWidth: Metrics.borderWidth))
@@ -37,13 +48,24 @@ struct PanelRootView: View {
                 focusToken: state.focusToken,
                 onCommand: onCommand
             )
+        case .library where library.editing != nil:
+            SearchBar(
+                icon: "pencil",
+                placeholder: "Add a note or #tags…",
+                modeLabel: "Edit",
+                text: $library.editText,
+                focusToken: state.focusToken,
+                onCommand: onCommand
+            )
         case .library:
             SearchBar(
                 icon: "magnifyingglass",
                 placeholder: "Search references…",
                 modeLabel: "Library",
-                text: $state.search,
+                text: $library.searchText,
                 focusToken: state.focusToken,
+                pills: library.pills,
+                onRemovePill: library.removePill,
                 onCommand: onCommand
             )
         }
@@ -51,21 +73,48 @@ struct PanelRootView: View {
 
     @ViewBuilder private var content: some View {
         switch state.mode {
-        case .capture: CaptureView(session: capture.session, isDropTargeted: capture.isDropTargeted)
-        case .library: LibraryView()
+        case .capture:
+            CaptureView(session: capture.session, isDropTargeted: capture.isDropTargeted)
+        case .library:
+            LibraryView(library: library, assetURL: assetURL, onClick: onClick)
         }
     }
 
-    /// Tag autocomplete, floating just under the note field.
-    @ViewBuilder private var suggestions: some View {
-        if state.mode == .capture, !capture.suggestions.isEmpty {
-            TagSuggestionList(tags: capture.suggestions, selected: capture.selectedSuggestion)
+    @ViewBuilder private var actionMenu: some View {
+        if state.mode == .library, library.isActionMenuOpen {
+            ActionMenu(library: library, onCommand: onMenuCommand)
+                .padding(.trailing, Metrics.contentInset)
+                .padding(.bottom, Metrics.actionBarHeight + Metrics.unit)
+                .transition(
+                    reduceMotion ? .opacity : .opacity.combined(with: .offset(y: Metrics.unit))
+                )
+        }
+    }
+
+    private func assetURL(_ path: String) -> URL {
+        library.library?.url(for: path) ?? URL(fileURLWithPath: path)
+    }
+}
+
+/// Tag autocomplete, floating just under the text field.
+private struct SuggestionsOverlay: View {
+    @ObservedObject var autocomplete: TagAutocomplete
+
+    var body: some View {
+        if autocomplete.isShowing {
+            TagSuggestionList(tags: autocomplete.suggestions, selected: autocomplete.selected)
                 .padding(.top, Metrics.searchBarHeight - Metrics.unit)
                 .padding(.leading, Metrics.searchBarPadding + Metrics.searchIconSize + Metrics.searchIconGap - Metrics.unit * 2)
         }
     }
+}
 
-    @ViewBuilder private var actionBar: some View {
+/// The bottom bar's context and keys, which change with what ↵ and Esc will do.
+private struct PanelActionBar: View {
+    @ObservedObject var state: PanelState
+    @ObservedObject var library: LibraryController
+
+    var body: some View {
         switch state.mode {
         case .capture:
             ActionBar(
@@ -74,11 +123,40 @@ struct PanelRootView: View {
                 secondary: ActionBarItem(label: "Library", keys: ["⇥"])
             )
         case .library:
-            ActionBar(
-                context: "No references",
-                primary: ActionBarItem(label: "Open", keys: ["↵"]),
-                secondary: ActionBarItem(label: "Actions", keys: ["⌘", "K"])
-            )
+            if let candidate = library.deleteCandidate {
+                ActionBar(
+                    context: "Delete “\(candidate.displayTitle)”?",
+                    contextStyle: Palette.danger,
+                    primary: ActionBarItem(label: "Delete", keys: ["↵"]),
+                    secondary: ActionBarItem(label: "Cancel", keys: ["esc"])
+                )
+            } else if let editing = library.editing {
+                ActionBar(
+                    context: "Editing “\(editing.displayTitle)”",
+                    primary: ActionBarItem(label: "Save", keys: ["↵"]),
+                    secondary: ActionBarItem(label: "Cancel", keys: ["esc"])
+                )
+            } else if library.results.isEmpty, !library.searchText.trimmingCharacters(in: .whitespaces).isEmpty {
+                ActionBar(
+                    context: "No results",
+                    primary: ActionBarItem(label: "Save as Note", keys: ["↵"]),
+                    secondary: ActionBarItem(label: "Capture", keys: ["⇥"])
+                )
+            } else {
+                ActionBar(
+                    context: countText,
+                    primary: ActionBarItem(label: "Open", keys: ["↵"]),
+                    secondary: ActionBarItem(label: "Actions", keys: ["⌘", "K"])
+                )
+            }
         }
+    }
+
+    private var countText: String {
+        // A filter that's still being typed (#hoo) doesn't count as searching yet.
+        let filtering = !library.query.isEmpty
+        let count = filtering ? library.results.count : library.totalCount
+        let noun = filtering ? (count == 1 ? "result" : "results") : (count == 1 ? "reference" : "references")
+        return "\(count) \(noun)"
     }
 }

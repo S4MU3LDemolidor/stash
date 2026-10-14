@@ -8,9 +8,13 @@ import SwiftUI
 final class PanelController: NSObject {
     let state = PanelState()
     let capture = CaptureController()
+    let libraryController = LibraryController()
 
     var library: LibraryStore? {
-        didSet { capture.library = library }
+        didSet {
+            capture.library = library
+            libraryController.library = library
+        }
     }
 
     /// The app that was frontmost when the panel opened: what Capture reads from.
@@ -31,6 +35,8 @@ final class PanelController: NSObject {
         panel.delegate = self
         panel.onCancel = { [weak self] in _ = self?.handle(.cancel) }
         panel.onKeyEquivalent = { [weak self] event in self?.handleKeyEquivalent(event) ?? false }
+        libraryController.onDismiss = { [weak self] in self?.hide() }
+        libraryController.onRefocus = { [weak self] in self?.state.refocus() }
         shadowWindow.level = panel.level
         shadowWindow.collectionBehavior = panel.collectionBehavior
     }
@@ -81,6 +87,7 @@ final class PanelController: NSObject {
         state.prepareForShow(mode: mode)
         captureStarted = false
         capture.reset()
+        libraryController.reset()
         if mode == .capture { startCapture() }
 
         let frame = frame(for: mode, on: screenWithMouse())
@@ -104,14 +111,46 @@ final class PanelController: NSObject {
     }
 
     func switchMode(to mode: PanelMode) {
+        guard mode != state.mode else { return }
+        libraryController.closeActionMenu()
         state.mode = mode
+        state.refocus()
         if mode == .capture, !captureStarted { startCapture() }
-        // Keep the top edge fixed; the panel grows or shrinks downwards.
+
+        // Keep the top edge fixed; the panel grows or shrinks downwards (150 ms, design.md §7).
         var frame = panel.frame
         frame.origin.y = frame.maxY - mode.height
         frame.size.height = mode.height
-        panel.setFrame(frame, display: true)
-        shadowWindow.layout(around: frame)
+        guard !reduceMotion else {
+            panel.setFrame(frame, display: true)
+            shadowWindow.layout(around: frame)
+            return
+        }
+        NSAnimationContext.runAnimationGroup { context in
+            context.duration = Motion.modeSwitch
+            context.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
+            panel.animator().setFrame(frame, display: true)
+        } completionHandler: { [weak self] in
+            MainActor.assumeIsolated { self?.shadowWindow.layout(around: frame) }
+        }
+    }
+
+    /// Click on a row or grid cell: select it; double-click opens it.
+    private func handleClick(_ reference: Reference) {
+        libraryController.selectedID = reference.id
+        if NSApp.currentEvent?.clickCount == 2 {
+            libraryController.open(reference, atTimestamp: false)
+        } else {
+            // Clicking the list must not take typing away from the search field.
+            state.refocus()
+        }
+    }
+
+    var windowNumber: Int { panel.windowNumber }
+
+    /// Whether text is selected in the focused text field (then ⌘C copies that text).
+    var hasSelectedText: Bool {
+        ((panel.firstResponder as? NSTextView)?.selectedRange().length ?? 0) > 0
     }
 
     private func startCapture() {
@@ -133,9 +172,14 @@ final class PanelController: NSObject {
         contentView.onDropTargetChanged = { [weak self] targeted in self?.capture.isDropTargeted = targeted }
         contentView.onDrop = { [weak self] pasteboard in self?.handleDrop(pasteboard) ?? false }
 
-        let rootView = PanelRootView(state: state, capture: capture) { [weak self] command in
-            self?.handle(command) ?? false
-        }
+        let rootView = PanelRootView(
+            state: state,
+            capture: capture,
+            library: libraryController,
+            onCommand: { [weak self] command in self?.handle(command) ?? false },
+            onMenuCommand: { [weak self] command in self?.handleMenu(command) ?? false },
+            onClick: { [weak self] reference in self?.handleClick(reference) }
+        )
         let hostingView = NSHostingView(rootView: rootView)
         // The controller sizes the panel; don't let SwiftUI push window size constraints.
         hostingView.sizingOptions = []

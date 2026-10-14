@@ -19,23 +19,27 @@ enum PanelKeyCommand {
     case tab
     case moveUp
     case moveDown
+    case moveLeft
+    case moveRight
+    case deleteBackward
 }
 
 /// State shared between `PanelController` (AppKit) and the SwiftUI views.
 @MainActor
 final class PanelState: ObservableObject {
     @Published var mode: PanelMode = .capture
-    /// The note typed in Capture (with inline #tags).
+    /// The note typed in Capture (with inline #tags). Library's search lives in `LibraryController`.
     @Published var note = ""
-    /// The search typed in Library.
-    @Published var search = ""
-    /// Incremented each time the panel opens, so the text field takes focus again.
+    /// Incremented to give the main text field keyboard focus again.
     @Published private(set) var focusToken = 0
 
     func prepareForShow(mode: PanelMode) {
         self.mode = mode
         note = ""
-        search = ""
+        refocus()
+    }
+
+    func refocus() {
         focusToken += 1
     }
 }

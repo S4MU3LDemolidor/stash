@@ -13,6 +13,26 @@ extension AppDelegate {
             presentError(error)
         }
     }
+
+    @objc func generateSampleLibrary(_ sender: Any?) {
+        guard let library else { return }
+        do {
+            try SampleLibrary.generate(into: library)
+            HUDController.shared.show(.saved)
+        } catch {
+            presentError(error)
+        }
+    }
+
+    /// Moves every reference tagged `sample` to the Trash.
+    @objc func removeSampleLibrary(_ sender: Any?) {
+        guard let library else { return }
+        do {
+            try SampleLibrary.removeAll(from: library)
+        } catch {
+            presentError(error)
+        }
+    }
 }
 
 /// Realistic references for trying the app out. Each call returns the next one in turn.

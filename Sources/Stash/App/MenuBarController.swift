@@ -55,6 +55,8 @@ final class MenuBarController: NSObject, NSMenuDelegate {
         debugItems = [
             .separator(),
             item("Debug: Create Sample Reference", #selector(AppDelegate.createSampleReference(_:)), target: target),
+            item("Debug: Generate 200 Sample References", #selector(AppDelegate.generateSampleLibrary(_:)), target: target),
+            item("Debug: Remove Sample References", #selector(AppDelegate.removeSampleLibrary(_:)), target: target),
         ]
         debugItems.forEach(menu.addItem)
 

@@ -29,9 +29,11 @@ To open the panel right at launch (handy while working on its UI):
 open build/Stash.app --args -StashShowPanel capture   # or: library
 ```
 
-Debug builds (`swift build`, then run `.build/debug/Stash`) also toggle the panel when the
-distributed notification `dev.stash.debug.toggle` is posted (object `"capture"` or `"library"`),
-which lets scripts open and close it the way the shortcut does, without activating Stash.
+Debug builds (`swift build`, then run `.build/debug/Stash`) can be driven from scripts with
+distributed notifications, without activating Stash or needing accessibility permissions:
+`dev.stash.debug.toggle` (object `"capture"` or `"library"`) works like the shortcut, and
+`dev.stash.debug.keys` (object like `"text:hooks down cmd+k esc"`) presses keys in the panel.
+See `Sources/Stash/App/DebugHooks.swift`.
 
 ## License
 

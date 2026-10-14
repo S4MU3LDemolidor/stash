@@ -11,6 +11,7 @@ struct SearchField: NSViewRepresentable {
     let placeholder: String
     /// When this changes, the field becomes first responder.
     let focusToken: Int
+    var font: NSFont = Typography.searchNS
     let onCommand: (PanelKeyCommand) -> Bool
 
     func makeCoordinator() -> Coordinator {
@@ -23,7 +24,7 @@ struct SearchField: NSViewRepresentable {
         field.isBezeled = false
         field.drawsBackground = false
         field.focusRingType = .none
-        field.font = Typography.searchNS
+        field.font = font
         field.textColor = Palette.textPrimary.nsColor
         field.usesSingleLineMode = true
         field.cell?.wraps = false
@@ -48,7 +49,7 @@ struct SearchField: NSViewRepresentable {
             field.placeholderAttributedString = NSAttributedString(
                 string: placeholder,
                 attributes: [
-                    .font: Typography.searchNS,
+                    .font: font,
                     .foregroundColor: Palette.textTertiary.nsColor,
                 ]
             )
@@ -59,7 +60,12 @@ struct SearchField: NSViewRepresentable {
             coordinator.focusToken = focusToken
             // Defer until the panel is key and the field is in its window.
             DispatchQueue.main.async {
+                guard field.window?.firstResponder != field.currentEditor() || field.currentEditor() == nil else { return }
                 field.window?.makeFirstResponder(field)
+                // Becoming first responder selects everything; put the caret at the end instead,
+                // so typing continues the text rather than replacing it.
+                let length = (field.stringValue as NSString).length
+                field.currentEditor()?.selectedRange = NSRange(location: length, length: 0)
             }
         }
     }
@@ -93,6 +99,9 @@ private extension PanelKeyCommand {
         case #selector(NSResponder.insertTab(_:)): self = .tab
         case #selector(NSResponder.moveUp(_:)): self = .moveUp
         case #selector(NSResponder.moveDown(_:)): self = .moveDown
+        case #selector(NSResponder.moveLeft(_:)): self = .moveLeft
+        case #selector(NSResponder.moveRight(_:)): self = .moveRight
+        case #selector(NSResponder.deleteBackward(_:)): self = .deleteBackward
         default: return nil
         }
     }

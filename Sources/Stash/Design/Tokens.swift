@@ -61,6 +61,8 @@ enum Palette {
 enum Typography {
     static let search = Font.system(size: 20)
     static let searchNS = NSFont.systemFont(ofSize: 20)
+    /// The ⌘K menu's own search field.
+    static let actionSearchNS = NSFont.systemFont(ofSize: 13)
     static let rowTitle = Font.system(size: 14, weight: .medium)
     static let rowSubtitle = Font.system(size: 13)
     static let section = Font.system(size: 11, weight: .semibold)
@@ -139,6 +141,13 @@ enum Metrics {
     static let previewThumb = CGSize(width: 96, height: 54)
     static let dashPattern: [CGFloat] = [4, 3]
     static let tagSuggestionsWidth: CGFloat = 240
+    static let actionMenuWidth: CGFloat = 300
+    static let actionRowHeight: CGFloat = 32
+    static let actionSearchHeight: CGFloat = 40
+    static let detailMediaMaxHeight: CGFloat = 200
+    static let detailFileIconSize: CGFloat = 64
+    static let selectionRingWidth: CGFloat = 2
+    static let selectionRingOpacity: CGFloat = 0.2
     static let popoverShadowRadius: CGFloat = 12
     static let popoverShadowOffsetY: CGFloat = 6
     static let popoverShadowOpacity: CGFloat = 0.25

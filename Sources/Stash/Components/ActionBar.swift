@@ -9,6 +9,7 @@ struct ActionBarItem {
 /// secondary action (separated by a thin divider) on the right.
 struct ActionBar: View {
     let context: String
+    var contextStyle = Palette.textSecondary
     let primary: ActionBarItem
     let secondary: ActionBarItem
 
@@ -20,7 +21,7 @@ struct ActionBar: View {
                 StashGlyph()
                 Text(context)
                     .font(Typography.meta)
-                    .foregroundStyle(Palette.textSecondary)
+                    .foregroundStyle(contextStyle)
                     .lineLimit(1)
                     .truncationMode(.middle)
 

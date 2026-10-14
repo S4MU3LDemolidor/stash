@@ -36,7 +36,7 @@ enum ImageInfo {
         CGImageSourceCreateWithData(data as CFData, nil).flatMap { thumbnail(of: $0) }
     }
 
-    static func thumbnail(fileURL: URL) -> NSImage? {
-        CGImageSourceCreateWithURL(fileURL as CFURL, nil).flatMap { thumbnail(of: $0) }
+    static func thumbnail(fileURL: URL, maxPixels: Int = 240) -> NSImage? {
+        CGImageSourceCreateWithURL(fileURL as CFURL, nil).flatMap { thumbnail(of: $0, maxPixels: maxPixels) }
     }
 }

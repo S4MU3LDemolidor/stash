@@ -7,6 +7,8 @@ struct SearchBar: View {
     let modeLabel: String
     @Binding var text: String
     let focusToken: Int
+    var pills: [FilterPill] = []
+    var onRemovePill: (FilterPill) -> Void = { _ in }
     let onCommand: (PanelKeyCommand) -> Bool
 
     var body: some View {
@@ -25,7 +27,9 @@ struct SearchBar: View {
                 )
                 .frame(maxWidth: .infinity)
 
-                // Active filter pills go here (M4).
+                ForEach(pills, id: \.self) { pill in
+                    FilterPillView(pill: pill) { onRemovePill(pill) }
+                }
 
                 Text(modeLabel)
                     .font(Typography.meta)

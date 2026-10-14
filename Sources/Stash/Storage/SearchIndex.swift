@@ -11,11 +11,11 @@ struct FileStamp: Equatable, Sendable {
 /// can be deleted at any time and `LibrarySync` rebuilds it.
 final class SearchIndex: Sendable {
     /// Bump when the schema changes; an index with another version is thrown away and rebuilt.
-    static let schemaVersion = 1
+    static let schemaVersion = 2
 
     /// FTS columns, in the order `bm25` weights refer to them.
-    private static let searchColumns = ["title", "note", "tags", "site", "urlText", "text"]
-    private static let searchWeights = "10.0, 5.0, 8.0, 3.0, 1.0, 2.0"
+    private static let searchColumns = ["title", "note", "tags", "site", "urlText", "text", "fileText"]
+    private static let searchWeights = "10.0, 5.0, 8.0, 3.0, 1.0, 2.0, 1.0"
 
     private let db: DatabaseQueue
 
@@ -70,6 +70,8 @@ final class SearchIndex: Sendable {
                 t.column("tags", .text).notNull()
                 t.column("note", .text).notNull()
                 t.column("text", .text)
+                // Text inside an attached file (PDF, plain text…), see FileTextExtractor.
+                t.column("fileText", .text)
             }
             try db.create(table: "referenceTag") { t in
                 t.column("referenceId", .text).notNull().references("reference", onDelete: .cascade)
@@ -92,20 +94,33 @@ final class SearchIndex: Sendable {
 
     // MARK: Writing
 
+    struct Upsert {
+        var reference: Reference
+        var stamp: FileStamp
+        /// Text inside the attached file. Nil keeps what's already indexed.
+        var fileText: String? = nil
+    }
+
     /// Applies one sync pass in a single transaction.
-    func apply(upserts: [(reference: Reference, stamp: FileStamp)], removedPaths: [String]) throws {
+    func apply(upserts: [Upsert], removedPaths: [String]) throws {
         try db.write { db in
             for path in removedPaths {
                 try db.execute(sql: "DELETE FROM reference WHERE path = ?", arguments: [path])
             }
-            for (reference, stamp) in upserts {
-                try Self.upsert(reference, stamp: stamp, in: db)
+            for upsert in upserts {
+                try Self.upsert(upsert.reference, stamp: upsert.stamp, fileText: upsert.fileText, in: db)
             }
         }
     }
 
-    func upsert(_ reference: Reference, stamp: FileStamp) throws {
-        try db.write { db in try Self.upsert(reference, stamp: stamp, in: db) }
+    func upsert(_ reference: Reference, stamp: FileStamp, fileText: String? = nil) throws {
+        try db.write { db in try Self.upsert(reference, stamp: stamp, fileText: fileText, in: db) }
+    }
+
+    func setFileText(_ text: String?, id: String) throws {
+        try db.write { db in
+            try db.execute(sql: "UPDATE reference SET fileText = ? WHERE id = ?", arguments: [text, id])
+        }
     }
 
     func remove(id: String) throws {
@@ -118,14 +133,14 @@ final class SearchIndex: Sendable {
         try db.write { db in try db.execute(sql: "DELETE FROM reference") }
     }
 
-    private static func upsert(_ reference: Reference, stamp: FileStamp, in db: Database) throws {
+    private static func upsert(_ reference: Reference, stamp: FileStamp, fileText: String?, in db: Database) throws {
         guard let path = reference.markdownPath else { return }
         // Another reference that used to live at this path (the file was replaced).
         try db.execute(sql: "DELETE FROM reference WHERE path = ? AND id != ?", arguments: [path, reference.id])
 
         let columns = [
             "id", "path", "modified", "size", "type", "created", "url", "urlText", "title", "site", "timestamp",
-            "file", "filename", "width", "height", "thumbnail", "tags", "note", "text",
+            "file", "filename", "width", "height", "thumbnail", "tags", "note", "text", "fileText",
         ]
         let values: [(any DatabaseValueConvertible)?] = [
             reference.id, path, stamp.modified, stamp.size, reference.type.rawValue,
@@ -133,9 +148,14 @@ final class SearchIndex: Sendable {
             reference.url.map { (Reference.site(for: $0) ?? "") + $0.path(percentEncoded: false) }, reference.title,
             reference.site, reference.timestamp, reference.file, reference.originalFilename,
             reference.width, reference.height, reference.thumbnail,
-            reference.tags.joined(separator: " "), reference.note, reference.text,
+            reference.tags.joined(separator: " "), reference.note, reference.text, fileText,
         ]
-        let updates = columns.dropFirst().map { "\($0) = excluded.\($0)" }.joined(separator: ", ")
+        let updates = columns.dropFirst().map { column in
+            // Extracting file text is slow, so most writes leave it as it is.
+            column == "fileText"
+                ? "fileText = COALESCE(excluded.fileText, reference.fileText)"
+                : "\(column) = excluded.\(column)"
+        }.joined(separator: ", ")
         try db.execute(
             sql: """
                 INSERT INTO reference (\(columns.joined(separator: ", ")))

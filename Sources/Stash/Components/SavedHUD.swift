@@ -3,12 +3,14 @@ import SwiftUI
 
 enum HUDMessage {
     case saved
+    case copied
     case nothingToSave
     case failed(String)
 
     var text: String {
         switch self {
         case .saved: "Saved to Stash"
+        case .copied: "Copied to Clipboard"
         case .nothingToSave: "Nothing to save"
         case .failed(let reason): "Couldn't save: \(reason)"
         }
@@ -102,7 +104,7 @@ struct SavedHUDView: View {
 
     private var icon: (name: String, style: ColorToken) {
         switch message {
-        case .saved: ("checkmark.circle.fill", Palette.accent)
+        case .saved, .copied: ("checkmark.circle.fill", Palette.accent)
         case .nothingToSave: ("minus.circle.fill", Palette.textTertiary)
         case .failed: ("exclamationmark.circle.fill", Palette.danger)
         }

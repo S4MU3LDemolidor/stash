@@ -35,7 +35,7 @@ struct LibrarySync: Sendable {
         // so on a fresh index the original wins.
         let ordered = onDisk.sorted { ($0.key.count, $0.key) < ($1.key.count, $1.key) }
 
-        var upserts: [(reference: Reference, stamp: FileStamp)] = []
+        var upserts: [SearchIndex.Upsert] = []
         for (path, file) in ordered where indexed[path]?.stamp != file.stamp {
             do {
                 let markdown = try String(contentsOf: file.url, encoding: .utf8)
@@ -46,7 +46,11 @@ struct LibrarySync: Sendable {
                     continue
                 }
                 owners[reference.id] = path
-                upserts.append((reference, file.stamp))
+                // New to the index: also read the text inside its attached file (already in the background).
+                let fileText = indexed[path] == nil && reference.type == .file
+                    ? reference.file.flatMap { FileTextExtractor.text(of: root.appending(path: $0)) }
+                    : nil
+                upserts.append(SearchIndex.Upsert(reference: reference, stamp: file.stamp, fileText: fileText))
             } catch {
                 result.skipped.append(path)
                 if indexed[path] != nil { removedPaths.append(path) }

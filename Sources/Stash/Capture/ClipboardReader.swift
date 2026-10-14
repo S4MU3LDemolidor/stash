@@ -5,10 +5,14 @@ import UniformTypeIdentifiers
 /// are only read when Capture opens).
 @MainActor
 final class ClipboardMonitor {
+    static let shared = ClipboardMonitor()
+
     private let pasteboard: NSPasteboard
     private var changeCount: Int
     private var timer: Timer?
     private(set) var lastChange: Date?
+    /// Clipboard contents Stash put there itself (e.g. Copy Link), which Capture shouldn't offer.
+    private var ownChangeCount: Int?
 
     init(pasteboard: NSPasteboard = .general) {
         self.pasteboard = pasteboard
@@ -28,8 +32,13 @@ final class ClipboardMonitor {
     /// Whether the clipboard changed within the last `window` seconds (never, if `window` is 0).
     func changed(within window: TimeInterval) -> Bool {
         poll()
-        guard window > 0, let lastChange else { return false }
+        guard window > 0, let lastChange, pasteboard.changeCount != ownChangeCount else { return false }
         return Date().timeIntervalSince(lastChange) <= window
+    }
+
+    func ignoreCurrentContents() {
+        poll()
+        ownChangeCount = pasteboard.changeCount
     }
 
     private func poll() {
