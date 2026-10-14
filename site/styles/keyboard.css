@@ -1,0 +1,140 @@
+/* The keyboard section: a board with Stash's keys lit, and the shortcut list under it. */
+
+.keyboard-section { overflow: hidden; }
+.keyboard-section::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 46%;
+  width: min(1100px, 120vw);
+  height: 520px;
+  max-width: none;
+  translate: -50% -50%;
+  background: radial-gradient(ellipse 50% 50% at 50% 50%, rgba(247, 125, 16, 0.18), transparent);
+  pointer-events: none;
+}
+
+.keyboard {
+  /* One key unit; the board is 14.32 units wide plus padding, so it always fits the column. */
+  --u: min(66px, calc((100vw - 2 * var(--gutter) - 4px) / 14.9));
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--u) * 0.12);
+  width: calc(var(--u) * 14.88 + 2px);
+  padding: calc(var(--u) * 0.28);
+  border-radius: calc(var(--u) * 0.36);
+  background: linear-gradient(180deg, #1b1b1f, #0f0f12);
+  border: 1px solid var(--border-strong);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 50px 100px -30px rgba(0, 0, 0, 0.9),
+    0 30px 80px -40px rgba(247, 125, 16, 0.5);
+  transform: perspective(1400px) rotateX(24deg);
+  transform-origin: 50% 70%;
+}
+.krow { display: flex; gap: calc(var(--u) * 0.12); }
+/* The last key of each row stretches so every row ends flush, like a real board. */
+.krow .key:last-child { flex: 1 1 auto; width: auto; }
+.key {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: flex-start;
+  flex: none;
+  width: var(--u);
+  height: var(--u);
+  padding: calc(var(--u) * 0.1) calc(var(--u) * 0.14);
+  border-radius: calc(var(--u) * 0.14);
+  background: linear-gradient(180deg, #2b2b30, #202024);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    0 calc(var(--u) * 0.05) 0 #0a0a0c,
+    0 calc(var(--u) * 0.08) calc(var(--u) * 0.12) rgba(0, 0, 0, 0.5);
+  color: rgba(255, 255, 255, 0.5);
+  font-size: calc(var(--u) * 0.17);
+  line-height: 1.1;
+  white-space: nowrap;
+}
+.key small { font-size: 0.85em; opacity: 0.8; }
+.key.w12 { width: calc(var(--u) * 1.25); }
+.key.w15 { width: calc(var(--u) * 1.5); }
+.key.w18 { width: calc(var(--u) * 1.8); }
+.key.w2 { width: calc(var(--u) * 2); }
+.key.w22 { width: calc(var(--u) * 2.25); }
+.key.w24 { width: calc(var(--u) * 2.35); }
+.key.w26 { width: calc(var(--u) * 2.6); }
+.key.w3 { width: calc(var(--u) * 3.24); }
+.key.w4 { width: calc(var(--u) * 4.36); }
+.key.w5 { width: calc(var(--u) * 5.6); }
+
+/* Keys that make up Stash's shortcuts glow amber. */
+.key.lit {
+  color: #2a1400;
+  background: linear-gradient(180deg, #ffd466, #f7ab17 60%, #f08a12);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.6),
+    0 calc(var(--u) * 0.05) 0 #8a4806,
+    0 0 calc(var(--u) * 0.6) rgba(247, 171, 23, 0.55);
+  font-weight: 600;
+  animation: press 4.8s var(--ease) infinite;
+}
+.key.lit-soft {
+  color: var(--amber-hi);
+  box-shadow:
+    inset 0 0 0 1px rgba(245, 165, 36, 0.5),
+    0 calc(var(--u) * 0.05) 0 #0a0a0c,
+    0 0 calc(var(--u) * 0.4) rgba(247, 171, 23, 0.25);
+}
+@keyframes press {
+  0%, 70%, 100% { translate: 0 0; }
+  74%, 80% { translate: 0 calc(var(--u) * 0.04); }
+}
+
+/* Feature claims printed on the wide keys, like Raycast's keyboard. */
+.key.feature {
+  justify-content: center;
+  padding: calc(var(--u) * 0.1) calc(var(--u) * 0.22);
+  color: var(--text-2);
+  font-size: calc(var(--u) * 0.18);
+  line-height: 1.25;
+  white-space: normal;
+  background: linear-gradient(180deg, #303036, #222226);
+}
+.key.feature b { display: block; color: var(--text); font-weight: 600; font-size: 1.12em; }
+
+.shortcuts {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1px;
+  max-width: 820px;
+  margin-top: clamp(48px, 7vw, 80px);
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--border);
+  border: 1px solid var(--border);
+}
+.shortcuts > div {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 18px 20px;
+  background: var(--bg-raised);
+  color: var(--text-2);
+  font-size: 15px;
+}
+.shortcuts .keys { display: flex; flex: none; min-width: 84px; }
+.shortcuts kbd { font-size: 13px; }
+
+@media (max-width: 980px) {
+  .shortcuts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 680px) {
+  .shortcuts { grid-template-columns: minmax(0, 1fr); }
+  .keyboard { transform: perspective(900px) rotateX(18deg); }
+  /* Too small to read on a phone: keep the bold word, drop the rest. */
+  .key.feature { font-size: 0; padding: 0 calc(var(--u) * 0.16); }
+  .key.feature b { font-size: calc(var(--u) * 0.32); }
+}

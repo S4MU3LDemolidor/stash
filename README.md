@@ -7,6 +7,7 @@
 </p>
 
 <p align="center">
+  <a href="https://s4mu3ldemolidor.github.io/stash/">Website</a> ·
   <a href="https://github.com/S4MU3LDemolidor/stash/releases/latest">Download</a> ·
   <a href="#install">Install</a> ·
   <a href="#privacy">Privacy</a> ·
@@ -215,6 +216,10 @@ scripts/run.sh
 Set `STASH_VERSION` (and optionally `STASH_BUILD`) for versioned builds, e.g.
 `STASH_VERSION=0.2.0 scripts/make-dmg.sh`.
 
+**Website:** `site/` is published to GitHub Pages on every push to `main` that changes it
+(see [`.github/workflows/pages.yml`](.github/workflows/pages.yml)). Preview it with
+`python3 -m http.server 8080 --directory site`.
+
 **Releases:** pushing a tag like `v0.1.0` makes GitHub Actions build, test and publish
 `Stash-0.1.0.dmg` and `Stash-0.1.0.zip` (see [`.github/workflows/build.yml`](.github/workflows/build.yml)).
 
@@ -243,6 +248,7 @@ Sources/Stash/
   Design/       design tokens and the Stash mark
 Support/        Info.plist, entitlements, app icon
 docs/           brand assets and screenshots
+site/           the website (plain HTML, CSS and JS; published to GitHub Pages)
 ```
 
 Built with Swift, SwiftUI and AppKit, plus two libraries:

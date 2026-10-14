@@ -1,0 +1,217 @@
+/* The stage under the hero: demo tabs, a desktop with a browser window, keystrokes and the HUD. */
+
+.demo { max-width: 1040px; margin-top: clamp(56px, 8vw, 96px); }
+
+.demo-tabs {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+.demo-tabs button {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 38px;
+  padding: 0 16px;
+  border: 0;
+  border-radius: 11px;
+  background: transparent;
+  color: var(--text-3);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  overflow: hidden;
+  transition: color 0.2s, background 0.2s;
+}
+.demo-tabs button:hover { color: var(--text-2); }
+.demo-tabs button[aria-selected="true"] {
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.06);
+  box-shadow: inset 0 0 0 1px var(--border);
+}
+.tab-glyph { font-size: 13px; opacity: 0.8; }
+.tab-progress {
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: 0;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--brand);
+  transform: scaleX(0);
+  transform-origin: left;
+  opacity: 0;
+}
+.demo-tabs button[aria-selected="true"] .tab-progress { opacity: 1; }
+
+.stage {
+  position: relative;
+  aspect-ratio: 960 / 600;
+  border-radius: 20px;
+  overflow: hidden;
+  border: 1px solid var(--border-strong);
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.6),
+    0 40px 120px -30px rgba(247, 125, 16, 0.35),
+    0 30px 80px -20px rgba(0, 0, 0, 0.8);
+  /* A warm, dark desktop wallpaper. */
+  background:
+    radial-gradient(ellipse 60% 70% at 85% 110%, rgba(247, 125, 16, 0.55), transparent 60%),
+    radial-gradient(ellipse 50% 60% at 10% -10%, rgba(255, 212, 102, 0.22), transparent 60%),
+    linear-gradient(160deg, #1b1209, #0b0806 55%, #170b03);
+}
+.stage-inner {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 960px;
+  height: 600px;
+  transform: translateX(var(--shift, 0px)) scale(var(--scale, 1));
+  transform-origin: top left;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", var(--sans);
+  letter-spacing: 0;
+}
+
+/* The browser window behind the panel. */
+.browser {
+  position: absolute;
+  left: 48px;
+  top: 36px;
+  width: 864px;
+  height: 600px;
+  border-radius: 12px;
+  background: #121214;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+  transition: filter 0.3s;
+}
+.stage-inner.panel-open .browser { filter: brightness(0.7); }
+.browser-bar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  height: 40px;
+  padding: 0 14px;
+  background: #1c1c1f;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+.dots { display: flex; gap: 7px; }
+.dots i { width: 11px; height: 11px; border-radius: 50%; background: #ff5f57; }
+.dots i:nth-child(2) { background: #febc2e; }
+.dots i:nth-child(3) { background: #28c840; }
+.address {
+  flex: 1;
+  max-width: 420px;
+  margin: 0 auto;
+  height: 24px;
+  border-radius: 7px;
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 12px;
+  line-height: 24px;
+  text-align: center;
+}
+.video { padding: 22px 26px; }
+.video-art {
+  position: relative;
+  height: 360px;
+  border-radius: 10px;
+  overflow: hidden;
+}
+.video-title { margin-top: 14px; color: rgba(255, 255, 255, 0.85); font-size: 17px; font-weight: 600; }
+.video-progress {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 12px;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 12px;
+}
+.video-progress span {
+  position: relative;
+  flex: 1;
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.15);
+}
+.video-progress span::before {
+  content: "";
+  position: absolute;
+  inset: 0 64% 0 0;
+  border-radius: 2px;
+  background: #f5a524;
+}
+.video-progress b { font-weight: 500; }
+
+/* Keys pressed during the demo float above the stage. */
+.keystroke {
+  position: absolute;
+  left: 50%;
+  top: 12px;
+  z-index: 5;
+  display: flex;
+  gap: 6px;
+  translate: -50% 0;
+  opacity: 0;
+  transform: translateY(-6px) scale(0.96);
+  transition: opacity 0.18s, transform 0.18s var(--ease);
+}
+.keystroke.show { opacity: 1; transform: none; }
+.keystroke span {
+  display: grid;
+  place-items: center;
+  min-width: 44px;
+  height: 44px;
+  padding: 0 12px;
+  border-radius: 10px;
+  background: linear-gradient(180deg, #2a2a2e, #1b1b1e);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow: 0 2px 0 #000, 0 12px 30px rgba(0, 0, 0, 0.5);
+  color: #fff;
+  font-size: 18px;
+  font-weight: 500;
+}
+
+/* "Saved to Stash" */
+.hud {
+  position: absolute;
+  left: 50%;
+  bottom: 96px;
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 36px;
+  padding: 0 14px;
+  border-radius: 18px;
+  translate: -50% 0;
+  background: rgba(30, 30, 33, 0.82);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45);
+  color: rgba(255, 255, 255, 0.92);
+  font-size: 13px;
+  font-weight: 500;
+  opacity: 0;
+  transform: scale(0.96);
+  transition: opacity 0.12s, transform 0.12s;
+}
+.hud.show { opacity: 1; transform: none; }
+.hud-check { color: var(--amber); font-weight: 700; }
+
+.stage.narrow { aspect-ratio: 790 / 580; border-radius: 14px; }
+
+@media (max-width: 699px) {
+  .demo-tabs { gap: 2px; }
+  .demo-tabs button { padding: 0 10px; font-size: 13px; }
+  .tab-glyph { display: none; }
+}
+
+.demo-hint { margin-top: 22px; text-align: center; font-size: 13px; color: var(--text-3); }
+.demo-hint kbd { font-size: 11px; }
