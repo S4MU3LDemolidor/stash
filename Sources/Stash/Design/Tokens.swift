@@ -122,6 +122,9 @@ enum Metrics {
     static let actionBarPadding: CGFloat = 12
     static let actionBarDividerHeight: CGFloat = 16
     static let glyphSize: CGFloat = 16
+    /// The Stash mark in the menu bar (Apple's guideline: about 16 pt in a 22 pt bar).
+    static let menuBarIconHeight: CGFloat = 16
+    static let aboutIconSize: CGFloat = 64
     static let glyphRadius: CGFloat = 4
 
     // Keycaps & tags

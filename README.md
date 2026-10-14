@@ -1,6 +1,25 @@
-# Stash
+<p align="center">
+  <img src="docs/brand/logo.png" alt="Stash" width="560">
+</p>
 
-**Save anything in two keystrokes. Find it again in one.**
+<p align="center">
+  <strong>Save anything in two keystrokes. Find it again in one.</strong>
+</p>
+
+<p align="center">
+  <a href="https://github.com/S4MU3LDemolidor/stash/releases/latest">Download</a> ·
+  <a href="#install">Install</a> ·
+  <a href="#privacy">Privacy</a> ·
+  <a href="#build-from-source">Build from source</a>
+</p>
+
+<p align="center">
+  <a href="https://github.com/S4MU3LDemolidor/stash/actions/workflows/build.yml"><img src="https://github.com/S4MU3LDemolidor/stash/actions/workflows/build.yml/badge.svg" alt="Build"></a>
+  <img src="https://img.shields.io/badge/macOS-14%2B-black" alt="macOS 14+">
+  <img src="https://img.shields.io/badge/license-MIT-black" alt="MIT license">
+</p>
+
+---
 
 Stash is a free, open source, fully local macOS menu bar app for saving references: the
 YouTube video you're watching (at the exact second), the article you're reading, a quote, a
@@ -15,18 +34,64 @@ Every reference is a plain Markdown file in a normal folder. No account, no serv
 
 <sub>Screenshots use the built-in sample data.</sub>
 
-## What it does
+## Why
+
+Saving references is slow and scattered: bookmarks you never open, screenshots piling up on
+the desktop, ideas sent to yourself in chat, "watch later" lists that become graveyards. Stash
+makes saving take two keystrokes and finding take one, and keeps everything as files you own.
+
+## Features
 
 - **Capture** (`⌥⇧S`): saves the current browser tab (Safari, Chrome, Arc, Brave, Edge), with
   the YouTube timestamp you're at. Not in a browser? It offers what you copied in the last
-  minute, or you paste, type or drop anything: links, text, images, files.
+  minute, or you paste, type or drop anything: links, text, images, files. A copied image
+  always wins over the tab.
 - **Notes and tags**: type `great hook in the first 3s #hooks #thumbnails` before pressing Enter.
-  `#` suggests tags you already use.
-- **Library** (`⌥⇧L`, or `⇥` from Capture): instant search across titles, notes, tags, sites and
-  the text inside saved PDFs and text files. Filter with `#tag` or `type:image`, `type:link`,
-  `type:text`, `type:file`. List with a preview, or a grid (`⌘G`) for browsing.
-- **Actions** (`⌘K`): open, open at the timestamp, copy, edit note and tags, reveal in Finder, delete.
-- **Titles and thumbnails** are fetched for saved links and kept with your library.
+  `#` suggests the tags you already use.
+- **Library** (`⌥⇧L`, or `⇥` from Capture): instant search on every keystroke across titles,
+  notes, tags, sites and the text inside saved PDFs and text files. Filter with `#tag` or
+  `type:image`, `type:link`, `type:text`, `type:file`. Results grouped by Today, Yesterday,
+  This Week and Earlier.
+- **List and grid**: a list with a preview pane, or a grid (`⌘G`) for browsing visually.
+- **Actions** (`⌘K`): open, open at the timestamp, copy, edit note and tags, reveal in Finder,
+  delete (to the Trash).
+- **Titles, thumbnails and site icons** are fetched for saved links and kept with your library.
+- **Plain files**: Markdown with YAML front matter, readable in any editor or Obsidian; edits
+  made elsewhere show up instantly.
+- **Your folder, anywhere**: keep the library in iCloud Drive, Dropbox or Syncthing to use it on
+  several Macs.
+- **Native**: light and dark mode, VoiceOver, Reduce Motion and Reduce Transparency.
+
+## Install
+
+1. Download **`Stash-x.y.z.dmg`** from the [latest release](https://github.com/S4MU3LDemolidor/stash/releases/latest).
+2. Open it and drag **Stash** onto **Applications**.
+3. Open Stash from Applications. It isn't notarized by Apple yet, so the first time macOS
+   stops it: open **System Settings › Privacy & Security**, scroll down and click
+   **Open Anyway** (on macOS 14 you can also right-click the app › **Open**). Or, in Terminal:
+   ```sh
+   xattr -dr com.apple.quarantine /Applications/Stash.app
+   ```
+4. Stash lives in the **menu bar** (the tray icon); it has no Dock icon. A hint shows the
+   shortcut the first time. Press `⌥⇧S` to capture.
+
+Requires macOS 14 Sonoma or later. To start Stash automatically, turn on **Settings › Launch at login**.
+
+## How to use it
+
+### Capture
+
+1. Press `⌥⇧S` anywhere.
+2. The panel shows what will be saved: the current browser tab, something you just copied, or
+   an empty card to paste, type or drop into.
+3. Optionally type a note with `#tags`.
+4. Press `↵`. The panel closes and **Saved to Stash** confirms it. (`⌘↵` saves and keeps the
+   panel open for the next one.)
+
+### Library
+
+Press `⌥⇧L`, type to search, `↑ ↓` to move, `↵` to open. `#tag` and `type:` become filter pills
+(`⌫` in an empty field removes the last one). No results? `↵` saves your search as a note.
 
 ### Keyboard
 
@@ -46,19 +111,14 @@ Every reference is a plain Markdown file in a normal folder. No account, no serv
 | `⌘,` | Settings | Settings |
 | `Esc` | Close | Clear the search, then close |
 
-Both shortcuts can be changed in Settings.
+Both global shortcuts can be changed in **Settings › Shortcuts**.
 
-## Install
+### Settings
 
-1. Download `Stash-x.y.z.zip` from [Releases](https://github.com/osamuelrc/stash/releases), unzip it
-   and move **Stash** to Applications.
-2. Open it. Stash isn't notarized by Apple yet, so macOS stops it the first time:
-   open **System Settings › Privacy & Security**, scroll down and click **Open Anyway** (on macOS 14
-   you can also right-click the app › **Open**). Alternatively:
-   `xattr -dr com.apple.quarantine /Applications/Stash.app`.
-3. Stash lives in the menu bar (the tray icon); it has no Dock icon. Press `⌥⇧S` to capture.
-
-Requires macOS 14 Sonoma or later.
+Shortcuts · library folder (choose, reveal, rebuild index) · fetch titles & thumbnails ·
+how recently copied things are offered (30 s, 1 min, 5 min, off) · launch at login · show the
+menu bar icon. If you hide the icon, open Stash again from Finder or Spotlight to get back to
+Settings.
 
 ## Permissions
 
@@ -75,7 +135,7 @@ Stash asks for as little as possible, and only when it's needed:
     Developer › Allow JavaScript from Apple Events**.
 
   Without it, Stash keeps any `t=` already in the link.
-- **Launch at login** (optional, in Settings) uses the standard Login Items.
+- **Launch at login** (optional) uses the standard Login Items.
 
 Stash does not need Accessibility, Screen Recording, Full Disk Access or any other permission.
 
@@ -88,8 +148,8 @@ Stash does not need Accessibility, Screen Recording, Full Disk Access or any oth
   sent or kept. Turn it off in **Settings › Capture › Fetch titles & thumbnails** and Stash makes
   no network requests at all.
 - **The clipboard** is only read when you open Capture, and only if you copied something
-  recently (1 minute by default, configurable, or off). Anything a password manager marks as
-  secret is never captured.
+  recently. Anything a password manager marks as secret is never captured, and things you copy
+  from Stash itself aren't offered back.
 
 ## Where your data lives
 
@@ -122,43 +182,80 @@ created: 2026-10-14T10:20:00-03:00
 great hook in the first 3s
 ```
 
-Text references keep the saved text as the body and the note in a `note:` field. You can edit
-the files in any editor (they open fine in Obsidian); Stash picks up changes, new files and
-deletions right away, and keeps front matter fields it doesn't know about.
+Text references keep the saved text as the body and the note in a `note:` field. Stash keeps
+front matter fields it doesn't know about, so you can add your own (in Obsidian, for example).
 
-**Several Macs:** move the library into iCloud Drive, Dropbox or a Syncthing folder (Settings ›
-Library › Choose…). On the other Mac, choose the same folder: Stash notices it already holds a
-library and uses it. Deleting a reference moves its files to the Trash.
+**Several Macs:** in **Settings › Library › Choose…**, move the library into iCloud Drive,
+Dropbox or a Syncthing folder. On the other Mac, choose the same folder: Stash sees it already
+holds a library and uses it. Deleting a reference moves its files to the Trash.
+
+**If Stash disappears tomorrow**, your library is still a folder of Markdown files and images.
 
 ## Build from source
 
 Requires macOS 14+ and a recent **Xcode** (tested with Xcode 27; the Command Line Tools alone
-aren't enough, one dependency needs Xcode's macros). Then, from the repository:
+aren't enough, one dependency needs Xcode's macros).
 
 ```sh
+git clone https://github.com/S4MU3LDemolidor/stash.git
+cd stash
 scripts/run.sh
 ```
 
-That builds `build/Stash.app`, quits any running copy and opens the new one. Other commands:
+`scripts/run.sh` builds `build/Stash.app`, quits any running copy and opens the new one.
 
-```sh
-scripts/build-app.sh          # build build/Stash.app only (release, ad-hoc signed)
-swift test                    # run the tests
-swift scripts/make-icon.swift # regenerate the placeholder app icon
-```
+| Command | What it does |
+|---|---|
+| `scripts/run.sh` | Build and launch the app |
+| `scripts/build-app.sh` | Build `build/Stash.app` (release, ad-hoc signed) |
+| `scripts/make-dmg.sh` | Build the app and `build/Stash-<version>.dmg` |
+| `swift test` | Run the tests |
+| `swift scripts/make-icon.swift` | Regenerate `Support/AppIcon.icns` from the icon artwork |
 
-Development aids:
+Set `STASH_VERSION` (and optionally `STASH_BUILD`) for versioned builds, e.g.
+`STASH_VERSION=0.2.0 scripts/make-dmg.sh`.
 
-- Hold `⌥` while opening the menu bar menu for debug commands (sample references).
+**Releases:** pushing a tag like `v0.1.0` makes GitHub Actions build, test and publish
+`Stash-0.1.0.dmg` and `Stash-0.1.0.zip` (see [`.github/workflows/build.yml`](.github/workflows/build.yml)).
+
+**Development aids:**
+
+- Hold `⌥` while opening the menu bar menu for debug commands (generate or remove 200 sample
+  references, tagged `#sample`).
 - `open build/Stash.app --args -libraryPath /tmp/stash-test` uses another library for one run.
 - `open build/Stash.app --args -StashShowPanel library` opens the panel at launch.
 - Debug builds (`.build/debug/Stash`) can be driven by scripts: see
   [`Sources/Stash/App/DebugHooks.swift`](Sources/Stash/App/DebugHooks.swift).
 
-Pushing a tag like `v0.1.0` makes GitHub Actions build, test and publish
-`Stash-0.1.0.zip` as a release (see [`.github/workflows/build.yml`](.github/workflows/build.yml)).
+### Project layout
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for how the code is organized.
+```
+Sources/Stash/
+  App/          entry point, menu bar, debug commands
+  Panel/        the floating panel, its keyboard map
+  Capture/      browser tab, clipboard, paste and drop, saving
+  Library/      search, list, detail pane, grid, ⌘K actions
+  Components/   search bar, action bar, keycaps, pills, HUD
+  Model/        references, tags, slugs, IDs
+  Storage/      Markdown files, folder sync, search index (GRDB + FTS5)
+  Enrichment/   YouTube, titles and thumbnails
+  Settings/     preferences and the Settings window
+  Design/       design tokens and the Stash mark
+Support/        Info.plist, entitlements, app icon
+docs/           brand assets and screenshots
+```
+
+Built with Swift, SwiftUI and AppKit, plus two libraries:
+[KeyboardShortcuts](https://github.com/sindresorhus/KeyboardShortcuts) (global shortcuts) and
+[GRDB.swift](https://github.com/groue/GRDB.swift) (SQLite full-text search).
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for principles and conventions.
+
+## Brand
+
+The logo and app icon live in [`docs/brand`](docs/brand). The menu bar icon is the same mark,
+drawn as vectors in [`StashMark.swift`](Sources/Stash/Design/StashMark.swift) so it stays sharp
+and follows the menu bar's light and dark appearance.
 
 ## License
 

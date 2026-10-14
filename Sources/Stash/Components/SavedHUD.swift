@@ -111,7 +111,7 @@ struct SavedHUDView: View {
     private var icon: (name: String, style: ColorToken) {
         switch message {
         case .saved, .copied: ("checkmark.circle.fill", Palette.accent)
-        case .welcome: ("tray.and.arrow.down.fill", Palette.accent)
+        case .welcome: ("", Palette.accent)
         case .nothingToSave: ("minus.circle.fill", Palette.textTertiary)
         case .failed: ("exclamationmark.circle.fill", Palette.danger)
         }
@@ -119,8 +119,13 @@ struct SavedHUDView: View {
 
     var body: some View {
         HStack(spacing: Metrics.unit * 2) {
-            Image(systemName: icon.name)
-                .foregroundStyle(icon.style)
+            if case .welcome = message {
+                // The mark in the logo's colors.
+                Image(nsImage: StashMark.image(height: Metrics.glyphSize, colors: StashMark.Colors()))
+            } else {
+                Image(systemName: icon.name)
+                    .foregroundStyle(icon.style)
+            }
             if case .welcome(let keys) = message {
                 Text("Stash is ready. Press").foregroundStyle(Palette.textPrimary)
                 Keycaps(keys: keys)

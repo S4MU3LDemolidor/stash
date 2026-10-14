@@ -50,11 +50,11 @@ struct ActionBar: View {
     }
 }
 
-/// The small Stash mark at the left of the action bar.
+/// The small Stash mark at the left of the action bar, in grey (design.md: greys do the work).
 struct StashGlyph: View {
     var body: some View {
-        Image(systemName: "tray.and.arrow.down.fill")
-            .font(.system(size: Metrics.glyphSize * 0.75))
+        Image(nsImage: StashMark.image(height: Metrics.glyphSize * 0.85))
+            .renderingMode(.template)
             .foregroundStyle(Palette.textSecondary)
             .frame(width: Metrics.glyphSize, height: Metrics.glyphSize)
             .accessibilityHidden(true)

@@ -81,6 +81,17 @@ struct SettingsView: View {
             }
 
             Section("About") {
+                HStack(spacing: Metrics.unit * 3) {
+                    Image(nsImage: NSApp.applicationIconImage)
+                        .resizable()
+                        .frame(width: Metrics.aboutIconSize, height: Metrics.aboutIconSize)
+                        .accessibilityHidden(true)
+                    VStack(alignment: .leading, spacing: Metrics.unit / 2) {
+                        Text("Stash").font(.headline)
+                        Text("Save anything in two keystrokes. Find it again in one.")
+                            .foregroundStyle(.secondary)
+                    }
+                }
                 LabeledContent("Version", value: AppInfo.version)
                 LabeledContent("Source code") {
                     Link("GitHub", destination: AppInfo.repositoryURL)

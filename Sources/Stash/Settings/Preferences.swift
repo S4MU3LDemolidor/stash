@@ -63,5 +63,5 @@ enum AppInfo {
     }
 
     /// Where the source code lives.
-    static let repositoryURL = URL(string: "https://github.com/osamuelrc/stash")!
+    static let repositoryURL = URL(string: "https://github.com/S4MU3LDemolidor/stash")!
 }

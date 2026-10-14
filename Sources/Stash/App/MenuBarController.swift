@@ -14,9 +14,8 @@ final class MenuBarController: NSObject, NSMenuDelegate {
         super.init()
 
         if let button = statusItem.button {
-            let image = NSImage(systemSymbolName: "tray.and.arrow.down", accessibilityDescription: "Stash")
-            image?.isTemplate = true
-            button.image = image
+            // The Stash mark as a template image: macOS tints it for light and dark menu bars.
+            button.image = StashMark.image(height: Metrics.menuBarIconHeight)
         }
 
         let menu = makeMenu(target: target)
