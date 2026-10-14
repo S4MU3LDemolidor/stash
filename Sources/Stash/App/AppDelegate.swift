@@ -1,8 +1,10 @@
 import AppKit
+import KeyboardShortcuts
 
 @MainActor
 final class AppDelegate: NSObject, NSApplicationDelegate {
     private var menuBarController: MenuBarController?
+    private let panelController = PanelController()
     private lazy var settingsWindowController = SettingsWindowController()
 
     func applicationWillFinishLaunching(_ notification: Notification) {
@@ -13,6 +15,20 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         menuBarController = MenuBarController(target: self)
+
+        KeyboardShortcuts.onKeyDown(for: .capture) { [weak self] in
+            self?.panelController.toggle(.capture)
+        }
+        KeyboardShortcuts.onKeyDown(for: .library) { [weak self] in
+            self?.panelController.toggle(.library)
+        }
+
+        // Developer aid: `open build/Stash.app --args -StashShowPanel library` opens the panel at launch.
+        switch UserDefaults.standard.string(forKey: "StashShowPanel") {
+        case "capture": panelController.toggle(.capture)
+        case "library": panelController.toggle(.library)
+        default: break
+        }
     }
 
     /// Opening the app again (e.g. from Finder) shows Settings, so it stays reachable
@@ -27,11 +43,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
 extension AppDelegate {
     @objc func capture(_ sender: Any?) {
-        // Opens the panel in Capture mode (M1).
+        panelController.toggle(.capture)
     }
 
     @objc func openLibrary(_ sender: Any?) {
-        // Opens the panel in Library mode (M1/M4).
+        panelController.toggle(.library)
     }
 
     @objc func openLibraryFolder(_ sender: Any?) {

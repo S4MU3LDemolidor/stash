@@ -26,7 +26,6 @@ enum MainMenu {
         menu.addItem(settings)
 
         menu.addItem(.separator())
-        menu.addItem(NSMenuItem(title: "Hide Stash", action: #selector(NSApplication.hide(_:)), keyEquivalent: "h"))
         menu.addItem(NSMenuItem(title: "Quit Stash", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q"))
         return menu
     }

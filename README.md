@@ -23,6 +23,12 @@ Stash lives in the menu bar; it has no Dock icon.
 
 To only build the app bundle: `scripts/build-app.sh`.
 
+To open the panel right at launch (handy while working on its UI):
+
+```sh
+open build/Stash.app --args -StashShowPanel capture   # or: library
+```
+
 ## License
 
 MIT. See [LICENSE](LICENSE).

@@ -8,6 +8,11 @@ enum Preferences {
         FileManager.default.homeDirectoryForCurrentUser
             .appending(path: "Stash", directoryHint: .isDirectory)
     }
+
+    /// The library folder for display, e.g. `~/Stash`.
+    static var libraryDisplayPath: String {
+        (libraryURL.path as NSString).abbreviatingWithTildeInPath
+    }
 }
 
 extension KeyboardShortcuts.Name {
