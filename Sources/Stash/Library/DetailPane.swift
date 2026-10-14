@@ -3,7 +3,7 @@ import SwiftUI
 /// Right side of the list: media, title, note, then the details (design.md §4, "Detail pane").
 struct DetailPane: View {
     let reference: Reference
-    let assetURL: (String) -> URL
+    let assets: LibraryAssets
 
     var body: some View {
         ScrollView {
@@ -41,19 +41,21 @@ struct DetailPane: View {
         switch reference.type {
         case .image:
             if let file = reference.file {
-                AssetImage(url: assetURL(file), maxPixels: 800, contentMode: .fit) { mediaPlaceholder(symbol: "photo") }
+                AssetImage(url: assets.assetURL(file), maxPixels: 800, contentMode: .fit) { mediaPlaceholder(symbol: "photo") }
                     .frame(maxWidth: .infinity, maxHeight: Metrics.detailMediaMaxHeight)
                     .clipShape(RoundedRectangle(cornerRadius: Metrics.gridRadius, style: .continuous))
             }
         case .link:
             if let thumbnail = reference.thumbnail {
-                videoFrame { AssetImage(url: assetURL(thumbnail), maxPixels: 800) { mediaPlaceholder(symbol: reference.symbolName) } }
+                videoFrame { AssetImage(url: assets.assetURL(thumbnail), maxPixels: 800) { mediaPlaceholder(symbol: reference.symbolName) } }
+            } else if assets.isLoading(reference.id) {
+                videoFrame { ShimmerPlaceholder() }
             } else if reference.isYouTube {
                 videoFrame { mediaPlaceholder(symbol: reference.symbolName) }
             }
         case .file:
             if let file = reference.file {
-                Image(nsImage: NSWorkspace.shared.icon(forFile: assetURL(file).path))
+                Image(nsImage: NSWorkspace.shared.icon(forFile: assets.assetURL(file).path))
                     .resizable()
                     .scaledToFit()
                     .frame(width: Metrics.detailFileIconSize, height: Metrics.detailFileIconSize)

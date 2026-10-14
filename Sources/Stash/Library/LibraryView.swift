@@ -4,7 +4,7 @@ import SwiftUI
 /// Library mode content: list + detail, or the grid, or an empty state.
 struct LibraryView: View {
     @ObservedObject var library: LibraryController
-    let assetURL: (String) -> URL
+    let assets: LibraryAssets
     let onClick: (Reference) -> Void
 
     var body: some View {
@@ -13,14 +13,14 @@ struct LibraryView: View {
         } else if library.results.isEmpty {
             NoResults(searchText: library.searchText)
         } else if library.layout == .grid {
-            GridView(library: library, assetURL: assetURL, onClick: onClick)
+            GridView(library: library, assets: assets, onClick: onClick)
         } else {
             HStack(spacing: 0) {
-                LibraryList(library: library, assetURL: assetURL, onClick: onClick)
+                LibraryList(library: library, assets: assets, onClick: onClick)
                 VerticalHairline()
                 Group {
                     if let selected = library.selected {
-                        DetailPane(reference: selected, assetURL: assetURL)
+                        DetailPane(reference: selected, assets: assets)
                     } else {
                         Color.clear
                     }
@@ -33,7 +33,7 @@ struct LibraryView: View {
 
 private struct LibraryList: View {
     @ObservedObject var library: LibraryController
-    let assetURL: (String) -> URL
+    let assets: LibraryAssets
     let onClick: (Reference) -> Void
 
     @State private var hovered: String?
@@ -54,7 +54,7 @@ private struct LibraryList: View {
                                 reference: reference,
                                 isSelected: reference.id == library.selectedID,
                                 isHovered: reference.id == hovered,
-                                assetURL: assetURL
+                                assets: assets
                             )
                             .id(reference.id)
                             .onTapGesture { onClick(reference) }

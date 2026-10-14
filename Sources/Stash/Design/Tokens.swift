@@ -20,6 +20,9 @@ struct ColorToken: ShapeStyle {
 
     static let clear = ColorToken(dark: .clear, light: .clear)
 
+    /// As a SwiftUI `Color` that follows the appearance, for APIs that need a `Color` (gradients).
+    var color: Color { Color(nsColor: nsColor) }
+
     /// The same color at full opacity (used for Reduce Transparency).
     var opaque: ColorToken {
         ColorToken(dark: dark.withAlphaComponent(1), light: light.withAlphaComponent(1))
@@ -109,6 +112,8 @@ enum Metrics {
     static let rowIconSize: CGFloat = 20
     static let rowIconRadius: CGFloat = 5
     static let rowIconGap: CGFloat = 10
+    /// Favicons sit a little inside the 20 pt icon square.
+    static let rowIconInset: CGFloat = 2
     static let sectionHeaderHeight: CGFloat = 28
     static let sectionHeaderPadding: CGFloat = 12
 
@@ -173,4 +178,6 @@ enum Motion {
     static let hudHold: TimeInterval = 1.2
     static let hudFadeOut: TimeInterval = 0.2
     static let thumbnailFade: TimeInterval = 0.15
+    /// One sweep of the loading shimmer.
+    static let shimmer: TimeInterval = 1.2
 }

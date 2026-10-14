@@ -9,7 +9,12 @@ struct CaptureView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: Metrics.unit * 2) {
             if let item = session.item {
-                CaptureCard(item: item, preview: session.preview, isTargeted: isDropTargeted)
+                CaptureCard(
+                    item: item,
+                    preview: session.preview ?? session.linkThumbnail,
+                    isLoadingImage: session.fetchingMetadata,
+                    isTargeted: isDropTargeted
+                )
             } else if let browser = session.readingBrowser {
                 CaptureCard.loading(from: browser)
             } else {

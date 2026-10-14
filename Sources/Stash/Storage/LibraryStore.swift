@@ -45,6 +45,7 @@ final class LibraryStore {
             try index.removeAll()
             try index.setMetaValue(self.root.path, for: "root")
         }
+        reloadSiteIcons()
     }
 
     /// The library at `Preferences.libraryURL`, indexed in `~/Library/Application Support/Stash/`.
@@ -189,6 +190,8 @@ final class LibraryStore {
     }
 
     private func syncFinished(changed: Bool) {
+        // Icons may have arrived from another Mac too.
+        reloadSiteIcons()
         if changed { notifyChange() }
         let runAgain = syncState == .runningWithPendingRequest
         syncState = .idle
@@ -201,5 +204,35 @@ final class LibraryStore {
         let result = try LibrarySync(root: root, index: index).run()
         if result.hasChanges { notifyChange() }
         return result
+    }
+
+    // MARK: Site icons
+
+    /// Favicons, one per site and shared by all its references: `assets/icons/<site>.png`.
+    private(set) var siteIcons: Set<String> = []
+
+    private var siteIconsURL: URL { assetsURL.appending(path: "icons", directoryHint: .isDirectory) }
+
+    func siteIconURL(for site: String?) -> URL? {
+        guard let name = site.map(Self.iconName), siteIcons.contains(name) else { return nil }
+        return siteIconsURL.appending(path: "\(name).png")
+    }
+
+    func saveSiteIcon(_ data: Data, site: String) throws {
+        let name = Self.iconName(site)
+        try FileManager.default.createDirectory(at: siteIconsURL, withIntermediateDirectories: true)
+        try data.write(to: siteIconsURL.appending(path: "\(name).png"), options: .atomic)
+        siteIcons.insert(name)
+        notifyChange()
+    }
+
+    func reloadSiteIcons() {
+        let files = (try? FileManager.default.contentsOfDirectory(atPath: siteIconsURL.path)) ?? []
+        siteIcons = Set(files.filter { $0.hasSuffix(".png") }.map { String($0.dropLast(4)) })
+    }
+
+    /// `www.YouTube.com` → `youtube.com`, and nothing that can't be in a file name.
+    private static func iconName(_ site: String) -> String {
+        String(site.lowercased().filter { $0.isLetter || $0.isNumber || $0 == "." || $0 == "-" })
     }
 }

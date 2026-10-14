@@ -14,6 +14,8 @@ final class CaptureController: ObservableObject {
     let autocomplete = TagAutocomplete()
 
     var library: LibraryStore?
+    /// Fills in titles and thumbnails after saving.
+    var enricher: Enricher?
 
     private let clipboard = ClipboardMonitor.shared
     private let reader = BrowserTabReader.shared
@@ -161,7 +163,12 @@ final class CaptureController: ObservableObject {
         let session = self.session
         await session.detection?.value
         guard let library else { throw CaptureError.libraryUnavailable }
-        return try await CaptureSaver(library: library).save(session.item, note: note)
+        let saved = try await CaptureSaver(library: library).save(session.item, note: note)
+        if let saved {
+            // The link shows right away; its title and thumbnail follow.
+            enricher?.enrich(saved, prefetched: session.metadata)
+        }
+        return saved
     }
 
     // MARK: Tag autocomplete

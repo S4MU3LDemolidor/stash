@@ -3,7 +3,7 @@ import SwiftUI
 /// The moodboard (⌘G): thumbnails in a grid, titles underneath (design.md §4, "Grid").
 struct GridView: View {
     @ObservedObject var library: LibraryController
-    let assetURL: (String) -> URL
+    let assets: LibraryAssets
     let onClick: (Reference) -> Void
 
     @State private var hovered: String?
@@ -22,7 +22,7 @@ struct GridView: View {
                             reference: reference,
                             isSelected: reference.id == library.selectedID,
                             isHovered: reference.id == hovered,
-                            assetURL: assetURL
+                            assets: assets
                         )
                         .id(reference.id)
                         .onTapGesture { onClick(reference) }
@@ -44,7 +44,7 @@ private struct GridCell: View {
     let reference: Reference
     let isSelected: Bool
     let isHovered: Bool
-    let assetURL: (String) -> URL
+    let assets: LibraryAssets
 
     private var shape: RoundedRectangle {
         RoundedRectangle(cornerRadius: Metrics.gridRadius, style: .continuous)
@@ -84,7 +84,7 @@ private struct GridCell: View {
 
     @ViewBuilder private var thumbnail: some View {
         if let image = reference.type == .image ? reference.file : reference.thumbnail {
-            AssetImage(url: assetURL(image), maxPixels: 400) { placeholder }
+            AssetImage(url: assets.assetURL(image), maxPixels: 400) { placeholder }
         } else if reference.type == .text {
             // Text items render as a card with their first lines.
             Text(reference.text ?? reference.note)
@@ -98,11 +98,13 @@ private struct GridCell: View {
             Rectangle()
                 .fill(Palette.fillKeycap)
                 .overlay {
-                    Image(nsImage: NSWorkspace.shared.icon(forFile: assetURL(file).path))
+                    Image(nsImage: NSWorkspace.shared.icon(forFile: assets.assetURL(file).path))
                         .resizable()
                         .scaledToFit()
                         .padding(Metrics.unit * 6)
                 }
+        } else if assets.isLoading(reference.id) {
+            ShimmerPlaceholder()
         } else {
             placeholder
         }
@@ -113,8 +115,13 @@ private struct GridCell: View {
             .fill(Palette.fillKeycap)
             .overlay {
                 VStack(spacing: Metrics.unit) {
-                    Image(systemName: reference.symbolName)
-                        .font(.system(size: Metrics.searchIconSize))
+                    if let icon = assets.siteIconURL(reference.site) {
+                        AssetImage(url: icon, maxPixels: 64, contentMode: .fit) { EmptyView() }
+                            .frame(width: Metrics.rowIconSize, height: Metrics.rowIconSize)
+                    } else {
+                        Image(systemName: reference.symbolName)
+                            .font(.system(size: Metrics.searchIconSize))
+                    }
                     if let site = reference.site {
                         Text(site).font(Typography.meta)
                     }

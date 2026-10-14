@@ -9,6 +9,13 @@ enum Preferences {
         static let libraryPath = "libraryPath"
         /// Seconds after copying something during which Capture offers it. 0 turns it off.
         static let clipboardWindow = "clipboardWindow"
+        /// Whether to fetch titles, thumbnails and icons for saved links (the only network use).
+        static let fetchMetadata = "fetchMetadata"
+    }
+
+    /// Default on. When off, Stash makes no network requests at all.
+    static var fetchMetadata: Bool {
+        UserDefaults.standard.object(forKey: Key.fetchMetadata) as? Bool ?? true
     }
 
     /// How recently something must have been copied for Capture to pick it up. Default 1 minute.

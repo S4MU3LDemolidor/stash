@@ -10,6 +10,8 @@ struct CaptureCard: View {
     let titleIsPlaceholder: Bool
     let subtitle: String?
     let badge: String
+    /// The page image is still being fetched: shimmer instead of the symbol.
+    var isLoadingImage = false
     var isTargeted = false
 
     var body: some View {
@@ -54,6 +56,9 @@ struct CaptureCard: View {
                     Image(nsImage: image)
                         .resizable()
                         .scaledToFill()
+                        .transition(.opacity)
+                } else if isLoadingImage {
+                    ShimmerPlaceholder()
                 } else {
                     Image(systemName: symbol)
                         .font(.system(size: Metrics.searchIconSize))
@@ -66,7 +71,7 @@ struct CaptureCard: View {
 }
 
 extension CaptureCard {
-    init(item: CaptureItem, preview: NSImage?, isTargeted: Bool) {
+    init(item: CaptureItem, preview: NSImage?, isLoadingImage: Bool, isTargeted: Bool) {
         let badge = item.origin.badge
         switch item.content {
         case .link(let url, let title, let timestamp):
@@ -75,11 +80,12 @@ extension CaptureCard {
             let at = timestamp ?? (isVideo ? YouTube.timestamp(in: url) : nil)
             self.init(
                 symbol: isVideo ? "play.rectangle.fill" : "link",
-                image: nil,
+                image: preview,
                 title: title ?? url.absoluteString,
                 titleIsPlaceholder: title == nil,
                 subtitle: at.map { "\(site) · at \(YouTube.formatTime($0))" } ?? site,
                 badge: badge,
+                isLoadingImage: isLoadingImage,
                 isTargeted: isTargeted
             )
         case .text(let text):

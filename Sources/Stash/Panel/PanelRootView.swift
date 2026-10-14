@@ -5,6 +5,7 @@ struct PanelRootView: View {
     @ObservedObject var state: PanelState
     @ObservedObject var capture: CaptureController
     @ObservedObject var library: LibraryController
+    @ObservedObject var enricher: Enricher
     let onCommand: (PanelKeyCommand) -> Bool
     let onMenuCommand: (PanelKeyCommand) -> Bool
     let onClick: (Reference) -> Void
@@ -76,7 +77,7 @@ struct PanelRootView: View {
         case .capture:
             CaptureView(session: capture.session, isDropTargeted: capture.isDropTargeted)
         case .library:
-            LibraryView(library: library, assetURL: assetURL, onClick: onClick)
+            LibraryView(library: library, assets: assets, onClick: onClick)
         }
     }
 
@@ -91,8 +92,14 @@ struct PanelRootView: View {
         }
     }
 
-    private func assetURL(_ path: String) -> URL {
-        library.library?.url(for: path) ?? URL(fileURLWithPath: path)
+    private var assets: LibraryAssets {
+        let store = library.library
+        let loading = enricher.inProgress
+        return LibraryAssets(
+            assetURL: { store?.url(for: $0) ?? URL(fileURLWithPath: $0) },
+            siteIconURL: { store?.siteIconURL(for: $0) },
+            isLoading: { loading.contains($0) }
+        )
     }
 }
 

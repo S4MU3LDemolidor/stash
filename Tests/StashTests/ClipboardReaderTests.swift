@@ -16,7 +16,7 @@ final class ClipboardReaderTests {
         pasteboard.releaseGlobally()
     }
 
-    static func pngData(width: Int = 3, height: Int = 2) -> Data {
+    nonisolated static func pngData(width: Int = 3, height: Int = 2) -> Data {
         let rep = NSBitmapImageRep(
             bitmapDataPlanes: nil, pixelsWide: width, pixelsHigh: height, bitsPerSample: 8,
             samplesPerPixel: 4, hasAlpha: true, isPlanar: false, colorSpaceName: .deviceRGB,

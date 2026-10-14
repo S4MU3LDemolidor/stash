@@ -62,6 +62,14 @@ enum LibraryFormatting {
 extension Reference {
     var isYouTube: Bool { url.map { YouTube.videoID(in: $0) != nil } ?? false }
 
+    /// `nngroup.com/articles/f-shaped`: shown until the page's title arrives.
+    var displayURL: String? {
+        guard let url else { return nil }
+        let host = Reference.site(for: url) ?? url.host(percentEncoded: false) ?? ""
+        let path = url.path(percentEncoded: false)
+        return host + (path == "/" ? "" : path)
+    }
+
     private var firstLineOfNote: String? {
         note.split(whereSeparator: \.isNewline).first.map(String.init)
     }
@@ -69,7 +77,7 @@ extension Reference {
     /// The row's main line.
     var displayTitle: String {
         switch type {
-        case .link: title ?? site ?? url?.absoluteString ?? "Link"
+        case .link: title ?? displayURL ?? "Link"
         case .text: text?.split(whereSeparator: \.isNewline).first.map(String.init) ?? firstLineOfNote ?? "Text"
         case .image: firstLineOfNote ?? originalFilename ?? "Image"
         case .file: originalFilename ?? firstLineOfNote ?? "File"

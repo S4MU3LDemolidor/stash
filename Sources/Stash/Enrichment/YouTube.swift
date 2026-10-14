@@ -103,4 +103,31 @@ enum YouTube {
     private static func isValidID(_ id: String) -> Bool {
         id.count == 11 && id.allSatisfy { $0.isASCII && ($0.isLetter || $0.isNumber || $0 == "-" || $0 == "_") }
     }
+
+    // MARK: Metadata (see MetadataFetcher)
+
+    static let homeURL = URL(string: "https://www.youtube.com/")!
+
+    /// YouTube's public oEmbed endpoint: title and author of a video, no API key.
+    static func oEmbedURL(videoID: String) -> URL {
+        var components = URLComponents(string: "https://www.youtube.com/oembed")!
+        components.queryItems = [
+            URLQueryItem(name: "url", value: canonicalURL(videoID: videoID, timestamp: nil).absoluteString),
+            URLQueryItem(name: "format", value: "json"),
+        ]
+        return components.url!
+    }
+
+    static func title(fromOEmbed data: Data) -> String? {
+        struct Response: Decodable { let title: String? }
+        let title = (try? JSONDecoder().decode(Response.self, from: data))?.title?
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+        return title?.isEmpty == false ? title : nil
+    }
+
+    /// Video thumbnails, best first. `maxresdefault` doesn't exist for every video; `mqdefault`
+    /// is always 16:9 (`hqdefault` is 4:3 with black bars).
+    static func thumbnailURLs(videoID: String) -> [URL] {
+        ["maxresdefault", "mqdefault", "hqdefault"].map { URL(string: "https://i.ytimg.com/vi/\(videoID)/\($0).jpg")! }
+    }
 }
