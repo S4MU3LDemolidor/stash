@@ -29,7 +29,29 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         case "library": panelController.toggle(.library)
         default: break
         }
+
+        #if DEBUG
+        observeDebugToggle()
+        #endif
     }
+
+    #if DEBUG
+    /// Debug builds only: lets scripts toggle the panel the way the shortcut does, without
+    /// activating Stash (e.g. to check focus handling). Post the distributed notification
+    /// `dev.stash.debug.toggle` with object "capture" or "library".
+    private func observeDebugToggle() {
+        DistributedNotificationCenter.default().addObserver(
+            forName: Notification.Name("dev.stash.debug.toggle"),
+            object: nil,
+            queue: .main
+        ) { [weak self] notification in
+            let mode: PanelMode = (notification.object as? String) == "library" ? .library : .capture
+            MainActor.assumeIsolated {
+                self?.panelController.toggle(mode)
+            }
+        }
+    }
+    #endif
 
     /// Opening the app again (e.g. from Finder) shows Settings, so it stays reachable
     /// even if the menu bar icon is hidden.
