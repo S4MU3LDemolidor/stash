@@ -70,6 +70,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             library.startWatching()
             library.scheduleSync()
             self.library = library
+            panelController.library = library
         } catch {
             presentError(error)
         }

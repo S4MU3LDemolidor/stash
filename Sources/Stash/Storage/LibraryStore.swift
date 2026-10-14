@@ -113,9 +113,14 @@ final class LibraryStore {
         notifyChange()
     }
 
+    /// `assets/<id>.<ext>`, relative to the root (no extension if there's none).
+    func assetPath(id: String, fileExtension: String) -> String {
+        fileExtension.isEmpty ? "assets/\(id)" : "assets/\(id).\(fileExtension.lowercased())"
+    }
+
     /// Writes `data` to `assets/<id>.<ext>` and returns that path, relative to the root.
     func saveAsset(_ data: Data, id: String, fileExtension: String) throws -> String {
-        let path = "assets/\(id).\(fileExtension.lowercased())"
+        let path = assetPath(id: id, fileExtension: fileExtension)
         try data.write(to: url(for: path), options: .atomic)
         return path
     }

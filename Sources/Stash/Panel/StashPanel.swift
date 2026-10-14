@@ -5,6 +5,8 @@ import AppKit
 final class StashPanel: NSPanel {
     /// Called on Esc when nothing inside the panel handled it.
     var onCancel: (() -> Void)?
+    /// ⌘-shortcuts (⌘↵, ⌘V, ⌘⌫…) before the field or the menu sees them. Returns whether it handled one.
+    var onKeyEquivalent: ((NSEvent) -> Bool)?
 
     init() {
         super.init(
@@ -42,6 +44,9 @@ final class StashPanel: NSPanel {
     override func performKeyEquivalent(with event: NSEvent) -> Bool {
         let modifiers = event.modifierFlags.intersection(.deviceIndependentFlagsMask)
         if modifiers == .command, let key = event.charactersIgnoringModifiers, ["q", "h"].contains(key) {
+            return true
+        }
+        if onKeyEquivalent?(event) == true {
             return true
         }
         return super.performKeyEquivalent(with: event)

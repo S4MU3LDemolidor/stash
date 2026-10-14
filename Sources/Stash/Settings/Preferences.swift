@@ -7,6 +7,13 @@ enum Preferences {
         /// Path of the library folder (`~` allowed). Also settable for one run with
         /// `-libraryPath /some/folder` on the command line.
         static let libraryPath = "libraryPath"
+        /// Seconds after copying something during which Capture offers it. 0 turns it off.
+        static let clipboardWindow = "clipboardWindow"
+    }
+
+    /// How recently something must have been copied for Capture to pick it up. Default 1 minute.
+    static var clipboardWindow: TimeInterval {
+        UserDefaults.standard.object(forKey: Key.clipboardWindow) as? TimeInterval ?? 60
     }
 
     /// The library folder: `libraryPath` if set, otherwise `~/Stash`.

@@ -25,13 +25,17 @@ enum PanelKeyCommand {
 @MainActor
 final class PanelState: ObservableObject {
     @Published var mode: PanelMode = .capture
-    @Published var query = ""
-    /// Incremented each time the panel opens, so the search field takes focus again.
+    /// The note typed in Capture (with inline #tags).
+    @Published var note = ""
+    /// The search typed in Library.
+    @Published var search = ""
+    /// Incremented each time the panel opens, so the text field takes focus again.
     @Published private(set) var focusToken = 0
 
     func prepareForShow(mode: PanelMode) {
         self.mode = mode
-        query = ""
+        note = ""
+        search = ""
         focusToken += 1
     }
 }

@@ -18,6 +18,8 @@ struct ColorToken: ShapeStyle {
         }
     }
 
+    static let clear = ColorToken(dark: .clear, light: .clear)
+
     /// The same color at full opacity (used for Reduce Transparency).
     var opaque: ColorToken {
         ColorToken(dark: dark.withAlphaComponent(1), light: light.withAlphaComponent(1))
@@ -136,6 +138,16 @@ enum Metrics {
     static let previewCardRadius: CGFloat = 10
     static let previewThumb = CGSize(width: 96, height: 54)
     static let dashPattern: [CGFloat] = [4, 3]
+    static let tagSuggestionsWidth: CGFloat = 240
+    static let popoverShadowRadius: CGFloat = 12
+    static let popoverShadowOffsetY: CGFloat = 6
+    static let popoverShadowOpacity: CGFloat = 0.25
+
+    // Saved HUD
+    static let hudHeight: CGFloat = 36
+    static let hudPadding: CGFloat = 14
+    /// Distance of the HUD from the bottom of the visible screen area.
+    static let hudBottomOffset: CGFloat = 96
     static let emptyIconSize: CGFloat = 32
 }
 

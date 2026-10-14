@@ -3,6 +3,7 @@ import SwiftUI
 /// The panel's three zones: search on top, content in the middle, action bar at the bottom.
 struct PanelRootView: View {
     @ObservedObject var state: PanelState
+    @ObservedObject var capture: CaptureController
     let onCommand: (PanelKeyCommand) -> Bool
 
     @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
@@ -18,9 +19,11 @@ struct PanelRootView: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             actionBar
         }
+        .overlay(alignment: .topLeading) { suggestions }
         .background(reduceTransparency ? Palette.tint.opaque : Palette.tint)
         .clipShape(shape)
         .overlay(shape.strokeBorder(Palette.border, lineWidth: Metrics.borderWidth))
+        .onChange(of: state.note) { _, note in capture.noteChanged(note) }
     }
 
     @ViewBuilder private var searchBar: some View {
@@ -30,7 +33,7 @@ struct PanelRootView: View {
                 icon: "tray.and.arrow.down",
                 placeholder: "Add a note or #tags… (optional)",
                 modeLabel: "Capture",
-                text: $state.query,
+                text: $state.note,
                 focusToken: state.focusToken,
                 onCommand: onCommand
             )
@@ -39,7 +42,7 @@ struct PanelRootView: View {
                 icon: "magnifyingglass",
                 placeholder: "Search references…",
                 modeLabel: "Library",
-                text: $state.query,
+                text: $state.search,
                 focusToken: state.focusToken,
                 onCommand: onCommand
             )
@@ -48,8 +51,17 @@ struct PanelRootView: View {
 
     @ViewBuilder private var content: some View {
         switch state.mode {
-        case .capture: CaptureView()
+        case .capture: CaptureView(session: capture.session, isDropTargeted: capture.isDropTargeted)
         case .library: LibraryView()
+        }
+    }
+
+    /// Tag autocomplete, floating just under the note field.
+    @ViewBuilder private var suggestions: some View {
+        if state.mode == .capture, !capture.suggestions.isEmpty {
+            TagSuggestionList(tags: capture.suggestions, selected: capture.selectedSuggestion)
+                .padding(.top, Metrics.searchBarHeight - Metrics.unit)
+                .padding(.leading, Metrics.searchBarPadding + Metrics.searchIconSize + Metrics.searchIconGap - Metrics.unit * 2)
         }
     }
 

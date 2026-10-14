@@ -40,6 +40,8 @@ struct SearchField: NSViewRepresentable {
 
         if field.stringValue != text {
             field.stringValue = text
+            // Set from outside (e.g. tag autocomplete): keep typing at the end.
+            field.currentEditor()?.selectedRange = NSRange(location: (text as NSString).length, length: 0)
         }
 
         if field.placeholderAttributedString?.string != placeholder {
