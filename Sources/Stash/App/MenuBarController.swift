@@ -2,13 +2,16 @@ import AppKit
 import KeyboardShortcuts
 
 /// Owns the menu bar item and its menu (design.md §5, "Menu bar").
+/// Holding ⌥ while opening the menu also shows developer commands.
 @MainActor
-final class MenuBarController {
+final class MenuBarController: NSObject, NSMenuDelegate {
     private let statusItem: NSStatusItem
+    private var debugItems: [NSMenuItem] = []
 
     /// `target` receives the menu actions (see `AppDelegate` commands).
     init(target: AppDelegate) {
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
+        super.init()
 
         if let button = statusItem.button {
             let image = NSImage(systemSymbolName: "tray.and.arrow.down", accessibilityDescription: "Stash")
@@ -16,7 +19,9 @@ final class MenuBarController {
             button.image = image
         }
 
-        statusItem.menu = Self.makeMenu(target: target)
+        let menu = makeMenu(target: target)
+        menu.delegate = self
+        statusItem.menu = menu
     }
 
     var isVisible: Bool {
@@ -24,37 +29,43 @@ final class MenuBarController {
         set { statusItem.isVisible = newValue }
     }
 
-    private static func makeMenu(target: AppDelegate) -> NSMenu {
+    func menuNeedsUpdate(_ menu: NSMenu) {
+        let showDebug = NSEvent.modifierFlags.contains(.option)
+        for item in debugItems {
+            item.isHidden = !showDebug
+        }
+    }
+
+    private func makeMenu(target: AppDelegate) -> NSMenu {
         let menu = NSMenu()
 
-        let capture = NSMenuItem(title: "Capture", action: #selector(AppDelegate.capture(_:)), keyEquivalent: "")
-        capture.target = target
+        let capture = item("Capture", #selector(AppDelegate.capture(_:)), target: target)
         // Keeps the displayed shortcut in sync with the user's recorded one.
         capture.setShortcut(for: .capture)
         menu.addItem(capture)
 
-        let library = NSMenuItem(title: "Open Library", action: #selector(AppDelegate.openLibrary(_:)), keyEquivalent: "")
-        library.target = target
+        let library = item("Open Library", #selector(AppDelegate.openLibrary(_:)), target: target)
         library.setShortcut(for: .library)
         menu.addItem(library)
 
         menu.addItem(.separator())
+        menu.addItem(item("Open Library Folder", #selector(AppDelegate.openLibraryFolder(_:)), target: target))
+        menu.addItem(item("Settings…", #selector(AppDelegate.openSettings(_:)), key: ",", target: target))
 
-        let folder = NSMenuItem(
-            title: "Open Library Folder",
-            action: #selector(AppDelegate.openLibraryFolder(_:)),
-            keyEquivalent: ""
-        )
-        folder.target = target
-        menu.addItem(folder)
+        debugItems = [
+            .separator(),
+            item("Debug: Create Sample Reference", #selector(AppDelegate.createSampleReference(_:)), target: target),
+        ]
+        debugItems.forEach(menu.addItem)
 
-        let settings = NSMenuItem(title: "Settings…", action: #selector(AppDelegate.openSettings(_:)), keyEquivalent: ",")
-        settings.target = target
-        menu.addItem(settings)
-
-        let quit = NSMenuItem(title: "Quit Stash", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q")
-        menu.addItem(quit)
-
+        menu.addItem(.separator())
+        menu.addItem(NSMenuItem(title: "Quit Stash", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q"))
         return menu
+    }
+
+    private func item(_ title: String, _ action: Selector, key: String = "", target: AnyObject) -> NSMenuItem {
+        let item = NSMenuItem(title: title, action: action, keyEquivalent: key)
+        item.target = target
+        return item
     }
 }

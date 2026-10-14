@@ -5,6 +5,8 @@ import KeyboardShortcuts
 final class AppDelegate: NSObject, NSApplicationDelegate {
     private var menuBarController: MenuBarController?
     private let panelController = PanelController()
+    /// Nil only if the library folder or its index couldn't be opened.
+    private(set) var library: LibraryStore?
     private lazy var settingsWindowController = SettingsWindowController()
 
     func applicationWillFinishLaunching(_ notification: Notification) {
@@ -15,6 +17,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         menuBarController = MenuBarController(target: self)
+        loadLibrary()
 
         KeyboardShortcuts.onKeyDown(for: .capture) { [weak self] in
             self?.panelController.toggle(.capture)
@@ -59,6 +62,23 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         openSettings(nil)
         return false
     }
+
+    /// Opens the library folder and its index, then keeps the index in sync with the folder.
+    private func loadLibrary() {
+        do {
+            let library = try LibraryStore.openDefault()
+            library.startWatching()
+            library.scheduleSync()
+            self.library = library
+        } catch {
+            presentError(error)
+        }
+    }
+
+    func presentError(_ error: Error) {
+        NSApp.activate()
+        NSAlert(error: error).runModal()
+    }
 }
 
 // MARK: - Commands (targets of menu items)
@@ -73,11 +93,11 @@ extension AppDelegate {
     }
 
     @objc func openLibraryFolder(_ sender: Any?) {
-        let url = Preferences.libraryURL
+        let url = library?.root ?? Preferences.libraryURL
         do {
             try FileManager.default.createDirectory(at: url, withIntermediateDirectories: true)
         } catch {
-            NSAlert(error: error).runModal()
+            presentError(error)
             return
         }
         NSWorkspace.shared.open(url)

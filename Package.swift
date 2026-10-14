@@ -21,5 +21,10 @@ let package = Package(
             ],
             path: "Sources/Stash"
         ),
+        .testTarget(
+            name: "StashTests",
+            dependencies: ["Stash"],
+            path: "Tests/StashTests"
+        ),
     ]
 )
