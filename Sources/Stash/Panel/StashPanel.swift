@@ -26,7 +26,8 @@ final class StashPanel: NSPanel {
 
         isOpaque = false
         backgroundColor = .clear
-        hasShadow = true
+        // macOS draws no usable shadow for this window; PanelShadowWindow draws it instead.
+        hasShadow = false
     }
 
     override var canBecomeKey: Bool { true }

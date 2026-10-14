@@ -86,6 +86,10 @@ enum Metrics {
     /// Top edge of the panel, as a fraction of the visible frame's height from the top.
     static let panelTopOffset: CGFloat = 0.22
     static let borderWidth: CGFloat = 1
+    /// Panel shadow: `0 20 60 rgba(0,0,0,0.45)` (offset y, blur radius, opacity).
+    static let shadowOffsetY: CGFloat = 20
+    static let shadowBlur: CGFloat = 60
+    static let shadowOpacity: CGFloat = 0.45
 
     // Search bar
     static let searchBarHeight: CGFloat = 56

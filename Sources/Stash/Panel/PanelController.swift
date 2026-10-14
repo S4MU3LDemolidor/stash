@@ -11,6 +11,7 @@ final class PanelController: NSObject {
     private(set) var sourceApp: NSRunningApplication?
 
     private let panel = StashPanel()
+    private let shadowWindow = PanelShadowWindow()
     private let effectView = NSVisualEffectView()
     /// Bumped on every show/hide so a stale close animation can't hide a re-opened panel.
     private var transitionID = 0
@@ -21,6 +22,8 @@ final class PanelController: NSObject {
         configureContent()
         panel.delegate = self
         panel.onCancel = { [weak self] in self?.hide() }
+        shadowWindow.level = panel.level
+        shadowWindow.collectionBehavior = panel.collectionBehavior
     }
 
     // MARK: Public
@@ -46,9 +49,12 @@ final class PanelController: NSObject {
             context.duration = Motion.panelClose
             context.timingFunction = CAMediaTimingFunction(name: .easeIn)
             panel.animator().alphaValue = 0
+            shadowWindow.animator().alphaValue = 0
         } completionHandler: { [weak self] in
             MainActor.assumeIsolated {
                 guard let self, self.transitionID == id else { return }
+                self.panel.removeChildWindow(self.shadowWindow)
+                self.shadowWindow.orderOut(nil)
                 self.panel.orderOut(nil)
                 self.panel.alphaValue = 1
             }
@@ -66,11 +72,14 @@ final class PanelController: NSObject {
         sourceApp = frontmost?.bundleIdentifier == Bundle.main.bundleIdentifier ? nil : frontmost
 
         state.prepareForShow(mode: mode)
-        panel.setFrame(frame(for: mode, on: screenWithMouse()), display: false)
+        let frame = frame(for: mode, on: screenWithMouse())
+        panel.setFrame(frame, display: false)
+        shadowWindow.layout(around: frame)
 
         panel.alphaValue = 0
+        shadowWindow.alphaValue = 0
         panel.makeKeyAndOrderFront(nil)
-        panel.invalidateShadow()
+        panel.addChildWindow(shadowWindow, ordered: .below)
 
         if !reduceMotion {
             addScaleInAnimation()
@@ -79,8 +88,7 @@ final class PanelController: NSObject {
             context.duration = Motion.panelOpen
             context.timingFunction = CAMediaTimingFunction(name: .easeOut)
             panel.animator().alphaValue = 1
-        } completionHandler: { [weak self] in
-            MainActor.assumeIsolated { self?.panel.invalidateShadow() }
+            shadowWindow.animator().alphaValue = 1
         }
     }
 
@@ -108,7 +116,7 @@ final class PanelController: NSObject {
         frame.origin.y = frame.maxY - mode.height
         frame.size.height = mode.height
         panel.setFrame(frame, display: true)
-        panel.invalidateShadow()
+        shadowWindow.layout(around: frame)
     }
 
     private func configureContent() {
@@ -116,7 +124,7 @@ final class PanelController: NSObject {
         effectView.blendingMode = .behindWindow
         // Stash is never the active app, so keep the material from dimming to its inactive look.
         effectView.state = .active
-        // As the window's content view, the effect view's mask also shapes the window and its shadow.
+        // As the window's content view, the effect view's mask also shapes the window.
         effectView.maskImage = Self.cornerMask(radius: Metrics.panelCornerRadius)
         effectView.wantsLayer = true
 
