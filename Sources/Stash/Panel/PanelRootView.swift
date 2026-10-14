@@ -35,7 +35,6 @@ struct PanelRootView: View {
         .background(reduceTransparency ? Palette.tint.opaque : Palette.tint)
         .clipShape(shape)
         .overlay(shape.strokeBorder(Palette.border, lineWidth: Metrics.borderWidth))
-        .onChange(of: state.note) { _, note in capture.noteChanged(note) }
     }
 
     @ViewBuilder private var searchBar: some View {

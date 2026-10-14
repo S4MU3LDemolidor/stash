@@ -8,6 +8,7 @@ import Carbon.HIToolbox
 /// - `dev.stash.debug.toggle`, object `"capture"` or `"library"`: like pressing the shortcut;
 ///   `"settings"` opens Settings.
 /// - `dev.stash.debug.keys`, object e.g. `"text:hoo down cmd+k esc"`: key presses, in order.
+///   `paste:<text>` pastes into Capture from a private pasteboard (the clipboard isn't touched).
 @MainActor
 enum DebugHooks {
     static func install(panel: PanelController, openSettings: @escaping () -> Void) {
@@ -22,8 +23,16 @@ enum DebugHooks {
         center.addObserver(forName: Notification.Name("dev.stash.debug.keys"), object: nil, queue: .main) { [weak panel] note in
             let script = note.object as? String ?? ""
             MainActor.assumeIsolated {
-                guard let windowNumber = panel?.windowNumber else { return }
+                guard let panel else { return }
+                let windowNumber = panel.windowNumber
                 for token in script.split(separator: " ") {
+                    if token.hasPrefix("paste:") {
+                        let pasteboard = NSPasteboard(name: NSPasteboard.Name("dev.stash.debug.paste"))
+                        pasteboard.clearContents()
+                        pasteboard.setString(String(token.dropFirst("paste:".count)), forType: .string)
+                        panel.capture.paste(from: pasteboard)
+                        continue
+                    }
                     for event in events(for: String(token), windowNumber: windowNumber) {
                         NSApp.postEvent(event, atStart: false)
                     }

@@ -1,0 +1,55 @@
+# Builds and tests every push and pull request. For a tag like v0.1.0 it also publishes a
+# GitHub release with Stash-0.1.0.zip (the app, ad-hoc signed; see README › Install).
+name: Build
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-latest
+    permissions:
+      contents: write # to publish releases from tags
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # build number = commit count
+
+      - name: Use the newest Xcode on the runner
+        run: |
+          XCODE="$(ls -d /Applications/Xcode*.app | sort -V | tail -1)"
+          sudo xcode-select -s "$XCODE/Contents/Developer"
+          xcodebuild -version
+          swift --version
+
+      - name: Test
+        run: swift test
+
+      - name: Build Stash.app
+        run: |
+          if [[ "$GITHUB_REF_TYPE" == "tag" ]]; then VERSION="${GITHUB_REF_NAME#v}"; else VERSION="0.0.0"; fi
+          echo "VERSION=$VERSION" >> "$GITHUB_ENV"
+          STASH_VERSION="$VERSION" STASH_BUILD="$GITHUB_RUN_NUMBER" scripts/build-app.sh
+          ditto -c -k --keepParent build/Stash.app "build/Stash-$VERSION.zip"
+
+      - name: Keep the build
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stash-${{ env.VERSION }}
+          path: build/Stash-${{ env.VERSION }}.zip
+
+      - name: Publish the release
+        if: startsWith(github.ref, 'refs/tags/v')
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          ZIP="build/Stash-$VERSION.zip"
+          if gh release view "$GITHUB_REF_NAME" > /dev/null 2>&1; then
+            gh release upload "$GITHUB_REF_NAME" "$ZIP" --clobber
+          else
+            gh release create "$GITHUB_REF_NAME" "$ZIP" --title "Stash $VERSION" --generate-notes
+          fi

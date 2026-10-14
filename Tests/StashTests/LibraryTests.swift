@@ -268,7 +268,8 @@ final class FileSearchTests {
                 _ = try index.search(SearchQuery.parse(query))
             }
         }
-        // Seven keystrokes over 5,000 references; typing feels instant well under this.
-        #expect(elapsed < .milliseconds(350), "7 searches took \(elapsed)")
+        // Seven keystrokes over 5,000 references: about 16 ms each on an M-series Mac. The bound
+        // leaves room for slower CI machines while still meaning "instant".
+        #expect(elapsed < .milliseconds(700), "7 searches took \(elapsed)")
     }
 }

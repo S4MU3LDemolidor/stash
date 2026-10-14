@@ -39,6 +39,7 @@ final class PanelController: NSObject {
         panel.delegate = self
         panel.onCancel = { [weak self] in _ = self?.handle(.cancel) }
         panel.onKeyEquivalent = { [weak self] event in self?.handleKeyEquivalent(event) ?? false }
+        state.onNoteChange = { [weak self] note in self?.capture.noteChanged(note) }
         libraryController.onDismiss = { [weak self] in self?.hide() }
         libraryController.onRefocus = { [weak self] in self?.state.refocus() }
         shadowWindow.level = panel.level

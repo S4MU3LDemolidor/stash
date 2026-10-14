@@ -29,7 +29,12 @@ enum PanelKeyCommand {
 final class PanelState: ObservableObject {
     @Published var mode: PanelMode = .capture
     /// The note typed in Capture (with inline #tags). Library's search lives in `LibraryController`.
-    @Published var note = ""
+    @Published var note = "" {
+        // Called on every change, synchronously: SwiftUI's .onChange can merge a burst of
+        // keystrokes and miss the last one, leaving tag suggestions out of date.
+        didSet { if note != oldValue { onNoteChange?(note) } }
+    }
+    var onNoteChange: ((String) -> Void)?
     /// Incremented to give the main text field keyboard focus again.
     @Published private(set) var focusToken = 0
 

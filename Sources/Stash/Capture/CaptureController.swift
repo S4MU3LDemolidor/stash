@@ -119,8 +119,8 @@ final class CaptureController: ObservableObject {
     // MARK: Replacing what's captured
 
     /// ⌘V: the clipboard replaces whatever was detected.
-    func paste() {
-        guard let content = ClipboardReader.content(of: .general) else {
+    func paste(from pasteboard: NSPasteboard = .general) {
+        guard let content = ClipboardReader.content(of: pasteboard) else {
             NSSound.beep()
             return
         }
