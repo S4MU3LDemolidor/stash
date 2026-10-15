@@ -71,7 +71,7 @@ struct TagSuggestionList: View {
         VStack(alignment: .leading, spacing: 0) {
             ForEach(Array(tags.enumerated()), id: \.element) { index, tag in
                 HStack(spacing: 0) {
-                    Text("#").foregroundStyle(Palette.textTertiary)
+                    Text(verbatim: "#").foregroundStyle(Palette.textTertiary)
                     Text(tag).foregroundStyle(Palette.textPrimary)
                     Spacer(minLength: Metrics.unit * 4)
                     if index == selected {

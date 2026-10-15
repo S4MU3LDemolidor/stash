@@ -164,7 +164,7 @@ final class PanelController: NSObject {
 
     /// VoiceOver announces the panel as "Stash Capture" or "Stash Library".
     private func updateAccessibilityTitle(for mode: PanelMode) {
-        panel.setAccessibilityTitle(mode == .capture ? "Stash Capture" : "Stash Library")
+        panel.setAccessibilityTitle(mode == .capture ? String(localized: "Stash Capture") : String(localized: "Stash Library"))
     }
 
     private func startCapture() {

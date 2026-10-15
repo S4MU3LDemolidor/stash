@@ -29,6 +29,9 @@ jobs:
       - name: Test
         run: swift test
 
+      - name: Check translations against the code
+        run: scripts/check-strings.sh
+
       - name: Build Stash.app, the .dmg and a .zip
         run: |
           if [[ "$GITHUB_REF_TYPE" == "tag" ]]; then VERSION="${GITHUB_REF_NAME#v}"; else VERSION="0.0.0"; fi

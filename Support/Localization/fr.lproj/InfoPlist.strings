@@ -1,0 +1,3 @@
+/* Stash: Français. Info.plist texts (the Automation permission prompt). */
+"NSAppleEventsUsageDescription" = "Stash lit l’adresse de l’onglet actuel de votre navigateur quand vous capturez.";
+"NSHumanReadableCopyright" = "Licence MIT. Vos données ne quittent jamais votre Mac.";

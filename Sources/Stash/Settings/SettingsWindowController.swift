@@ -33,7 +33,7 @@ final class SettingsWindowController {
 
         let window = NSWindow(contentViewController: controller)
         window.styleMask = [.titled, .closable]
-        window.title = "Stash Settings"
+        window.title = String(localized: "Stash Settings")
         window.isReleasedWhenClosed = false
         window.center()
         return window

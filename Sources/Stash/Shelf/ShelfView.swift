@@ -86,7 +86,7 @@ struct ShelfView: View {
     }
 
     private var countText: String {
-        store.items.count == 1 ? "1 item" : "\(store.items.count) items"
+        store.items.count == 1 ? String(localized: "1 item") : String(localized: "\(store.items.count) items")
     }
 
     // MARK: Stack
@@ -147,7 +147,7 @@ struct ShelfView: View {
                         .lineLimit(1)
                         // File names keep their extension; texts and titles read from the start.
                         .truncationMode(item.isFileLike ? .middle : .tail)
-                    Text(missing ? "Missing" : subtitle(item))
+                    Text(missing ? String(localized: "Missing") : subtitle(item))
                         .font(Typography.meta)
                         .foregroundStyle(missing ? Palette.danger : Palette.textSecondary)
                         .lineLimit(1)
@@ -176,22 +176,22 @@ struct ShelfView: View {
         }
         .frame(height: Metrics.shelfRowHeight)
         .accessibilityElement(children: .combine)
-        .accessibilityLabel("\(item.name), \(missing ? "missing" : subtitle(item))")
+        .accessibilityLabel([item.name, missing ? String(localized: "Missing") : subtitle(item)].joined(separator: ", "))
     }
 
     private func subtitle(_ item: ShelfItem) -> String {
         switch item.kind {
         case .link(let url, _):
-            return "Link \u{00B7} " + (url.host(percentEncoded: false) ?? url.absoluteString)
+            return String(localized: "Link") + " \u{00B7} " + (url.host(percentEncoded: false) ?? url.absoluteString)
         case .stored(_, .text):
-            return "Text"
+            return String(localized: "Text")
         case .stored(_, .image):
-            return "Image"
+            return String(localized: "Image")
         case .stored, .file:
-            if item.isFolder { return "Folder" }
+            if item.isFolder { return String(localized: "Folder") }
             guard let url = actions.fileURL(item),
-                  let size = try? url.resourceValues(forKeys: [.fileSizeKey]).fileSize else { return "File" }
-            return "File \u{00B7} " + ByteCountFormatter.string(fromByteCount: Int64(size), countStyle: .file)
+                  let size = try? url.resourceValues(forKeys: [.fileSizeKey]).fileSize else { return String(localized: "File") }
+            return String(localized: "File") + " \u{00B7} " + ByteCountFormatter.string(fromByteCount: Int64(size), countStyle: .file)
         }
     }
 

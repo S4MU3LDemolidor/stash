@@ -35,6 +35,10 @@ cp Support/AppIcon.icns "$APP/Contents/Resources/AppIcon.icns"
     -c "Set :CFBundleVersion $BUILD_NUMBER" \
     "$APP/Contents/Info.plist"
 
+# Translations: Stash follows the macOS language (or the one picked for it in System Settings ›
+# General › Language & Region › Applications).
+cp -R Support/Localization/*.lproj "$APP/Contents/Resources/"
+
 # SwiftPM resource bundles of dependencies (localizations, privacy manifests).
 for bundle in "$BIN_DIR"/*.bundle; do
     [ -e "$bundle" ] || continue

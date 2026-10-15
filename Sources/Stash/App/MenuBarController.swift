@@ -66,18 +66,18 @@ final class MenuBarController: NSObject, NSMenuDelegate, NSWindowDelegate, NSDra
     private func makeMenu(target: AppDelegate) -> NSMenu {
         let menu = NSMenu()
 
-        let capture = item("Capture", #selector(AppDelegate.capture(_:)), target: target)
+        let capture = item(String(localized: "Capture"), #selector(AppDelegate.capture(_:)), target: target)
         // Keeps the displayed shortcut in sync with the user's recorded one.
         capture.setShortcut(for: .capture)
         menu.addItem(capture)
 
-        let library = item("Open Library", #selector(AppDelegate.openLibrary(_:)), target: target)
+        let library = item(String(localized: "Open Library"), #selector(AppDelegate.openLibrary(_:)), target: target)
         library.setShortcut(for: .library)
         menu.addItem(library)
 
         menu.addItem(.separator())
-        menu.addItem(item("Open Library Folder", #selector(AppDelegate.openLibraryFolder(_:)), target: target))
-        menu.addItem(item("Settings…", #selector(AppDelegate.openSettings(_:)), key: ",", target: target))
+        menu.addItem(item(String(localized: "Open Library Folder"), #selector(AppDelegate.openLibraryFolder(_:)), target: target))
+        menu.addItem(item(String(localized: "Settings…"), #selector(AppDelegate.openSettings(_:)), key: ",", target: target))
 
         debugItems = [
             .separator(),
@@ -88,7 +88,7 @@ final class MenuBarController: NSObject, NSMenuDelegate, NSWindowDelegate, NSDra
         debugItems.forEach(menu.addItem)
 
         menu.addItem(.separator())
-        menu.addItem(NSMenuItem(title: "Quit Stash", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q"))
+        menu.addItem(NSMenuItem(title: String(localized: "Quit Stash"), action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q"))
         return menu
     }
 

@@ -13,7 +13,7 @@ struct ActionMenu: View {
         VStack(spacing: 0) {
             SearchField(
                 text: $library.actionQuery,
-                placeholder: "Search actions…",
+                placeholder: String(localized: "Search actions…"),
                 focusToken: library.actionMenuFocusToken,
                 font: Typography.actionSearchNS,
                 onCommand: onCommand
@@ -77,7 +77,7 @@ struct ActionMenu: View {
         )
         .contentShape(Rectangle())
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel("\(action.title), \(action.keys.joined(separator: " "))")
+        .accessibilityLabel([action.title, action.keys.joined(separator: " ")].joined(separator: ", "))
         .accessibilityAddTraits(isSelected ? [.isSelected, .isButton] : .isButton)
     }
 }

@@ -22,35 +22,35 @@ enum MainMenu {
     private static func appMenu(target: AppDelegate) -> NSMenu {
         let menu = NSMenu(title: "Stash")
 
-        let settings = NSMenuItem(title: "Settings…", action: #selector(AppDelegate.openSettings(_:)), keyEquivalent: ",")
+        let settings = NSMenuItem(title: String(localized: "Settings…"), action: #selector(AppDelegate.openSettings(_:)), keyEquivalent: ",")
         settings.target = target
         menu.addItem(settings)
 
         menu.addItem(.separator())
-        menu.addItem(NSMenuItem(title: "Quit Stash", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q"))
+        menu.addItem(NSMenuItem(title: String(localized: "Quit Stash"), action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q"))
         return menu
     }
 
     /// ⌘W closes the Settings window.
     private static func windowMenu() -> NSMenu {
-        let menu = NSMenu(title: "Window")
-        menu.addItem(NSMenuItem(title: "Close", action: #selector(NSWindow.performClose(_:)), keyEquivalent: "w"))
+        let menu = NSMenu(title: String(localized: "Window"))
+        menu.addItem(NSMenuItem(title: String(localized: "Close"), action: #selector(NSWindow.performClose(_:)), keyEquivalent: "w"))
         return menu
     }
 
     private static func editMenu() -> NSMenu {
-        let menu = NSMenu(title: "Edit")
-        menu.addItem(NSMenuItem(title: "Undo", action: Selector(("undo:")), keyEquivalent: "z"))
+        let menu = NSMenu(title: String(localized: "Edit"))
+        menu.addItem(NSMenuItem(title: String(localized: "Undo"), action: Selector(("undo:")), keyEquivalent: "z"))
 
-        let redo = NSMenuItem(title: "Redo", action: Selector(("redo:")), keyEquivalent: "z")
+        let redo = NSMenuItem(title: String(localized: "Redo"), action: Selector(("redo:")), keyEquivalent: "z")
         redo.keyEquivalentModifierMask = [.command, .shift]
         menu.addItem(redo)
 
         menu.addItem(.separator())
-        menu.addItem(NSMenuItem(title: "Cut", action: #selector(NSText.cut(_:)), keyEquivalent: "x"))
-        menu.addItem(NSMenuItem(title: "Copy", action: #selector(NSText.copy(_:)), keyEquivalent: "c"))
-        menu.addItem(NSMenuItem(title: "Paste", action: #selector(NSText.paste(_:)), keyEquivalent: "v"))
-        menu.addItem(NSMenuItem(title: "Select All", action: #selector(NSText.selectAll(_:)), keyEquivalent: "a"))
+        menu.addItem(NSMenuItem(title: String(localized: "Cut"), action: #selector(NSText.cut(_:)), keyEquivalent: "x"))
+        menu.addItem(NSMenuItem(title: String(localized: "Copy"), action: #selector(NSText.copy(_:)), keyEquivalent: "c"))
+        menu.addItem(NSMenuItem(title: String(localized: "Paste"), action: #selector(NSText.paste(_:)), keyEquivalent: "v"))
+        menu.addItem(NSMenuItem(title: String(localized: "Select All"), action: #selector(NSText.selectAll(_:)), keyEquivalent: "a"))
         return menu
     }
 }

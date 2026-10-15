@@ -27,10 +27,10 @@ enum CaptureOrigin: Equatable {
 
     var badge: String {
         switch self {
-        case .browser(let name): "From \(name)"
-        case .clipboard: "From Clipboard"
-        case .pasted: "Pasted"
-        case .dropped: "Dropped"
+        case .browser(let name): String(localized: "From \(name)")
+        case .clipboard: String(localized: "From Clipboard")
+        case .pasted: String(localized: "Pasted")
+        case .dropped: String(localized: "Dropped")
         }
     }
 }

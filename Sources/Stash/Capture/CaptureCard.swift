@@ -95,7 +95,7 @@ extension CaptureCard {
                 image: nil,
                 title: firstLine,
                 titleIsPlaceholder: false,
-                subtitle: "Text · \(text.count) characters",
+                subtitle: String(localized: "Text · \(text.count) characters"),
                 badge: badge,
                 isTargeted: isTargeted
             )
@@ -104,14 +104,14 @@ extension CaptureCard {
             self.init(
                 symbol: "photo",
                 image: preview,
-                title: "Image",
+                title: String(localized: "Image"),
                 titleIsPlaceholder: false,
                 subtitle: fileExtension.uppercased() + size,
                 badge: badge,
                 isTargeted: isTargeted
             )
         case .file(let url):
-            let kind = UTType(filenameExtension: url.pathExtension)?.localizedDescription ?? "File"
+            let kind = UTType(filenameExtension: url.pathExtension)?.localizedDescription ?? String(localized: "File")
             let bytes = (try? url.resourceValues(forKeys: [.fileSizeKey]).fileSize).map {
                 " · " + ByteCountFormatter.string(fromByteCount: Int64($0), countStyle: .file)
             } ?? ""
@@ -132,10 +132,10 @@ extension CaptureCard {
         CaptureCard(
             symbol: "globe",
             image: nil,
-            title: "Reading \(browser.name)…",
+            title: String(localized: "Reading \(browser.name)…"),
             titleIsPlaceholder: true,
             subtitle: nil,
-            badge: "From \(browser.name)"
+            badge: CaptureOrigin.browser(browser.name).badge
         )
     }
 }

@@ -43,7 +43,7 @@ struct SettingsView: View {
             } header: {
                 Text("Library")
             } footer: {
-                Text(model.libraryStatus ?? "Every reference is a Markdown file in this folder. Put it in iCloud Drive to use your library on several Macs.")
+                Text(model.libraryStatus ?? String(localized: "Every reference is a Markdown file in this folder. Put it in iCloud Drive to use your library on several Macs."))
                     .foregroundStyle(.secondary)
                     .frame(maxWidth: .infinity, alignment: .leading)
             }

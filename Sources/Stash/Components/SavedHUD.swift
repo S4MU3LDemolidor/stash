@@ -16,14 +16,14 @@ enum HUDMessage {
 
     var text: String {
         switch self {
-        case .saved: "Saved to Stash"
-        case .merged: "Added to the Existing Reference"
-        case .alreadySaved: "Already in Stash"
-        case .copied: "Copied to Clipboard"
-        case .nothingToSave: "Nothing to save"
-        case .failed(let reason): "Couldn't save: \(reason)"
-        case .shelfFailed: "Couldn't add to the shelf"
-        case .welcome(let keys): "Stash is ready. Press \(keys.joined()) to capture."
+        case .saved: String(localized: "Saved to Stash")
+        case .merged: String(localized: "Added to the Existing Reference")
+        case .alreadySaved: String(localized: "Already in Stash")
+        case .copied: String(localized: "Copied to Clipboard")
+        case .nothingToSave: String(localized: "Nothing to save")
+        case .failed(let reason): String(localized: "Couldn't save: \(reason)")
+        case .shelfFailed: String(localized: "Couldn't add to the shelf")
+        case .welcome(let keys): String(localized: "Stash is ready. Press \(keys.joined()) to capture.")
         }
     }
 }

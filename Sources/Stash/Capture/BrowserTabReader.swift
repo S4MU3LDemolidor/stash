@@ -34,9 +34,9 @@ struct Browser: Equatable, Sendable {
     var javaScriptHint: String {
         switch dictionary {
         case .safari:
-            "To save the exact moment of a video, turn on Allow JavaScript from Apple Events in Safari › Settings › Developer."
+            String(localized: "To save the exact moment of a video, turn on Allow JavaScript from Apple Events in Safari › Settings › Developer.")
         case .chromium:
-            "To save the exact moment of a video, turn on View › Developer › Allow JavaScript from Apple Events in \(name)."
+            String(localized: "To save the exact moment of a video, turn on View › Developer › Allow JavaScript from Apple Events in \(name).")
         }
     }
 }

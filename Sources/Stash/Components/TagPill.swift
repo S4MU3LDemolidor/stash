@@ -8,7 +8,7 @@ struct TagPill: View {
 
     var body: some View {
         HStack(spacing: 0) {
-            Text("#").foregroundStyle(Palette.textTertiary)
+            Text(verbatim: "#").foregroundStyle(Palette.textTertiary)
             Text(tag).foregroundStyle(isActive ? Palette.accent : Palette.textSecondary)
         }
         .font(Typography.tag)
@@ -29,7 +29,7 @@ struct FilterPillView: View {
             switch pill {
             case .tag(let tag):
                 HStack(spacing: 0) {
-                    Text("#").foregroundStyle(Palette.textTertiary)
+                    Text(verbatim: "#").foregroundStyle(Palette.textTertiary)
                     Text(tag).foregroundStyle(Palette.accent)
                 }
             case .type:

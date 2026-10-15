@@ -29,7 +29,7 @@ final class ShelfController: NSObject, NSWindowDelegate {
         content.addSubview(hosting)
         panel.contentView = content
         panel.delegate = self
-        panel.setAccessibilityLabel("Shelf")
+        panel.setAccessibilityLabel(String(localized: "Shelf"))
 
         shadowWindow.level = panel.level
         shadowWindow.collectionBehavior = panel.collectionBehavior
@@ -117,10 +117,10 @@ final class ShelfController: NSObject, NSWindowDelegate {
     private func clear() {
         if store.holdsPrivateCopies {
             let alert = NSAlert()
-            alert.messageText = "Clear the shelf?"
-            alert.informativeText = "Some items exist only on the shelf (things dragged from a browser or another app) and will be deleted. Your files stay where they are."
-            alert.addButton(withTitle: "Clear")
-            alert.addButton(withTitle: "Cancel")
+            alert.messageText = String(localized: "Clear the shelf?")
+            alert.informativeText = String(localized: "Some items exist only on the shelf (things dragged from a browser or another app) and will be deleted. Your files stay where they are.")
+            alert.addButton(withTitle: String(localized: "Clear"))
+            alert.addButton(withTitle: String(localized: "Cancel"))
             NSApp.activate()
             guard alert.runModal() == .alertFirstButtonReturn else { return }
         }

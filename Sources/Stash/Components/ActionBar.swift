@@ -46,7 +46,7 @@ struct ActionBar: View {
             Keycaps(keys: item.keys)
         }
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel("\(item.label), \(item.keys.joined(separator: " "))")
+        .accessibilityLabel([item.label, item.keys.joined(separator: " ")].joined(separator: ", "))
     }
 }
 

@@ -44,8 +44,8 @@ struct PanelRootView: View {
         case .capture:
             SearchBar(
                 icon: "tray.and.arrow.down",
-                placeholder: "Add a note or #tags… (optional)",
-                modeLabel: "Capture",
+                placeholder: String(localized: "Add a note or #tags… (optional)"),
+                modeLabel: String(localized: "Capture"),
                 text: $state.note,
                 focusToken: state.focusToken,
                 onCommand: onCommand
@@ -53,8 +53,8 @@ struct PanelRootView: View {
         case .library where library.editing != nil:
             SearchBar(
                 icon: "pencil",
-                placeholder: "Add a note or #tags…",
-                modeLabel: "Edit",
+                placeholder: String(localized: "Add a note or #tags…"),
+                modeLabel: String(localized: "Edit"),
                 text: $library.editText,
                 focusToken: state.focusToken,
                 onCommand: onCommand
@@ -62,8 +62,8 @@ struct PanelRootView: View {
         case .library:
             SearchBar(
                 icon: "magnifyingglass",
-                placeholder: "Search references…",
-                modeLabel: "Library",
+                placeholder: String(localized: "Search references…"),
+                modeLabel: String(localized: "Library"),
                 text: $library.searchText,
                 focusToken: state.focusToken,
                 pills: library.pills,
@@ -128,41 +128,41 @@ private struct PanelActionBar: View {
         switch state.mode {
         case .capture where session.duplicate != nil && session.item != nil:
             ActionBar(
-                context: "Already in Stash",
-                primary: ActionBarItem(label: "Add to Existing", keys: ["↵"]),
-                secondary: ActionBarItem(label: "Save Copy", keys: ["⌥", "↵"])
+                context: String(localized: "Already in Stash"),
+                primary: ActionBarItem(label: String(localized: "Add to Existing"), keys: ["↵"]),
+                secondary: ActionBarItem(label: String(localized: "Save Copy"), keys: ["⌥", "↵"])
             )
         case .capture:
             ActionBar(
-                context: "Saving to \(Preferences.libraryDisplayPath)",
-                primary: ActionBarItem(label: "Save", keys: ["↵"]),
-                secondary: ActionBarItem(label: "Library", keys: ["⇥"])
+                context: String(localized: "Saving to \(Preferences.libraryDisplayPath)"),
+                primary: ActionBarItem(label: String(localized: "Save"), keys: ["↵"]),
+                secondary: ActionBarItem(label: String(localized: "Library"), keys: ["⇥"])
             )
         case .library:
             if let candidate = library.deleteCandidate {
                 ActionBar(
-                    context: "Delete “\(candidate.displayTitle)”?",
+                    context: String(localized: "Delete “\(candidate.displayTitle)”?"),
                     contextStyle: Palette.danger,
-                    primary: ActionBarItem(label: "Delete", keys: ["↵"]),
-                    secondary: ActionBarItem(label: "Cancel", keys: ["esc"])
+                    primary: ActionBarItem(label: String(localized: "Delete"), keys: ["↵"]),
+                    secondary: ActionBarItem(label: String(localized: "Cancel"), keys: ["esc"])
                 )
             } else if let editing = library.editing {
                 ActionBar(
-                    context: "Editing “\(editing.displayTitle)”",
-                    primary: ActionBarItem(label: "Save", keys: ["↵"]),
-                    secondary: ActionBarItem(label: "Cancel", keys: ["esc"])
+                    context: String(localized: "Editing “\(editing.displayTitle)”"),
+                    primary: ActionBarItem(label: String(localized: "Save"), keys: ["↵"]),
+                    secondary: ActionBarItem(label: String(localized: "Cancel"), keys: ["esc"])
                 )
             } else if library.results.isEmpty, !library.searchText.trimmingCharacters(in: .whitespaces).isEmpty {
                 ActionBar(
-                    context: "No results",
-                    primary: ActionBarItem(label: "Save as Note", keys: ["↵"]),
-                    secondary: ActionBarItem(label: "Capture", keys: ["⇥"])
+                    context: String(localized: "No results"),
+                    primary: ActionBarItem(label: String(localized: "Save as Note"), keys: ["↵"]),
+                    secondary: ActionBarItem(label: String(localized: "Capture"), keys: ["⇥"])
                 )
             } else {
                 ActionBar(
                     context: countText,
-                    primary: ActionBarItem(label: "Open", keys: ["↵"]),
-                    secondary: ActionBarItem(label: "Actions", keys: ["⌘", "K"])
+                    primary: ActionBarItem(label: String(localized: "Open"), keys: ["↵"]),
+                    secondary: ActionBarItem(label: String(localized: "Actions"), keys: ["⌘", "K"])
                 )
             }
         }
@@ -172,7 +172,9 @@ private struct PanelActionBar: View {
         // A filter that's still being typed (#hoo) doesn't count as searching yet.
         let filtering = !library.query.isEmpty
         let count = filtering ? library.results.count : library.totalCount
-        let noun = filtering ? (count == 1 ? "result" : "results") : (count == 1 ? "reference" : "references")
-        return "\(count) \(noun)"
+        if filtering {
+            return count == 1 ? String(localized: "1 result") : String(localized: "\(count) results")
+        }
+        return count == 1 ? String(localized: "1 reference") : String(localized: "\(count) references")
     }
 }

@@ -130,10 +130,10 @@ struct DetailPane: View {
         guard reference.type == .image, let width = reference.width, let height = reference.height else {
             return reference.kindDescription
         }
-        return "Image · \(width)×\(height)"
+        return String(localized: "Image · \(width)×\(height)")
     }
 
-    private func row(_ title: String, _ value: String) -> some View {
+    private func row(_ title: LocalizedStringKey, _ value: String) -> some View {
         GridRow {
             label(title)
             Text(value)
@@ -144,7 +144,7 @@ struct DetailPane: View {
         }
     }
 
-    private func label(_ title: String) -> some View {
+    private func label(_ title: LocalizedStringKey) -> some View {
         Text(title)
             .font(Typography.detailBody)
             .foregroundStyle(Palette.textTertiary)

@@ -41,8 +41,8 @@ final class SettingsModel: ObservableObject {
         panel.canChooseFiles = false
         panel.canCreateDirectories = true
         panel.allowsMultipleSelection = false
-        panel.prompt = "Use Folder"
-        panel.message = "Choose where to keep your Stash library. A folder in iCloud Drive keeps it in sync across your Macs."
+        panel.prompt = String(localized: "Use Folder")
+        panel.message = String(localized: "Choose where to keep your Stash library. A folder in iCloud Drive keeps it in sync across your Macs.")
         guard panel.runModal() == .OK, let destination = panel.url else { return }
 
         let current = library()?.root ?? Preferences.libraryURL
@@ -52,21 +52,21 @@ final class SettingsModel: ObservableObject {
                 return
             case .switchToExisting(let count):
                 guard confirm(
-                    "Use the library in “\(destination.lastPathComponent)”?",
-                    detail: "It already has \(count) references. Your current library stays where it is.",
-                    button: "Use This Library"
+                    String(localized: "Use the library in “\(destination.lastPathComponent)”?"),
+                    detail: String(localized: "It already has \(count) references. Your current library stays where it is."),
+                    button: String(localized: "Use This Library")
                 ) else { return }
                 try switchLibrary(destination)
-                libraryStatus = "Switched to the library in \(destination.lastPathComponent)."
+                libraryStatus = String(localized: "Switched to the library in \(destination.lastPathComponent).")
             case .move(let count):
                 guard confirm(
-                    "Move your library to “\(destination.lastPathComponent)”?",
-                    detail: "\(count) references and their images and files will be moved there.",
-                    button: "Move Library"
+                    String(localized: "Move your library to “\(destination.lastPathComponent)”?"),
+                    detail: String(localized: "\(count) references and their images and files will be moved there."),
+                    button: String(localized: "Move Library")
                 ) else { return }
                 try LibraryMover.move(from: current, to: destination)
                 try switchLibrary(destination)
-                libraryStatus = "Moved \(count) references."
+                libraryStatus = String(localized: "Moved \(count) references.")
             }
         } catch {
             NSAlert(error: error).runModal()
@@ -79,8 +79,8 @@ final class SettingsModel: ObservableObject {
         do {
             try library.index.removeAll()
             let result = try library.syncNow()
-            libraryStatus = "Index rebuilt: \(result.indexed) references."
-                + (result.skipped.isEmpty ? "" : " \(result.skipped.count) files couldn't be read.")
+            libraryStatus = String(localized: "Index rebuilt: \(result.indexed) references.")
+                + (result.skipped.isEmpty ? "" : " " + String(localized: "\(result.skipped.count) files couldn't be read."))
         } catch {
             NSAlert(error: error).runModal()
         }
@@ -107,7 +107,7 @@ final class SettingsModel: ObservableObject {
         alert.messageText = message
         alert.informativeText = detail
         alert.addButton(withTitle: button)
-        alert.addButton(withTitle: "Cancel")
+        alert.addButton(withTitle: String(localized: "Cancel"))
         return alert.runModal() == .alertFirstButtonReturn
     }
 }

@@ -8,6 +8,13 @@
 	<string>Stash</string>
 	<key>CFBundleExecutable</key>
 	<string>Stash</string>
+	<key>CFBundleLocalizations</key>
+	<array>
+		<string>en</string>
+		<string>pt-BR</string>
+		<string>es</string>
+		<string>fr</string>
+	</array>
 	<key>CFBundleIconFile</key>
 	<string>AppIcon</string>
 	<key>CFBundleIdentifier</key>

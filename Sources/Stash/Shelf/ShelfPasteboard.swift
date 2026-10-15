@@ -23,7 +23,7 @@ enum ShelfPasteboard {
         switch ClipboardReader.content(of: pasteboard) {
         case .image(let data, let fileExtension)?:
             let name = try store.storeCopy(data, fileExtension: fileExtension)
-            return [ShelfItem(name: "Image", kind: .stored(fileName: name, type: .image))]
+            return [ShelfItem(name: String(localized: "Image"), kind: .stored(fileName: name, type: .image))]
         case .text(let text)?:
             let name = try store.storeCopy(Data(text.utf8), fileExtension: "txt")
             return [ShelfItem(name: ShelfItem.preview(of: text), kind: .stored(fileName: name, type: .text))]

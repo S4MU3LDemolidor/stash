@@ -6,7 +6,7 @@ import AppKit
 final class CaptureController: ObservableObject {
     enum CaptureError: LocalizedError {
         case libraryUnavailable
-        var errorDescription: String? { "The library folder isn't available." }
+        var errorDescription: String? { String(localized: "The library folder isn't available.") }
     }
 
     @Published private(set) var session = CaptureSession()
@@ -87,8 +87,7 @@ final class CaptureController: ObservableObject {
             session.item = fallback.map { CaptureItem(content: $0, origin: .clipboard) }
         case .failure(let error):
             if error == .notPermitted {
-                session.hint = "Stash isn't allowed to read \(browser.name)'s tab. "
-                    + "Turn it on in System Settings › Privacy & Security › Automation."
+                session.hint = String(localized: "Stash isn't allowed to read \(browser.name)'s tab. Turn it on in System Settings › Privacy & Security › Automation.")
             }
             session.item = fallback.map { CaptureItem(content: $0, origin: .clipboard) }
         }

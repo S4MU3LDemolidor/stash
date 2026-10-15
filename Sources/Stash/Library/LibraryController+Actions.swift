@@ -16,13 +16,13 @@ extension LibraryController {
     var actions: [LibraryAction] {
         guard let reference = selected else { return [toggleLayoutAction] }
         var actions = [
-            LibraryAction(id: "open", title: "Open", symbol: "arrow.up.forward.app", keys: ["↵"]) { [weak self] in
+            LibraryAction(id: "open", title: String(localized: "Open"), symbol: "arrow.up.forward.app", keys: ["↵"]) { [weak self] in
                 self?.open(reference, atTimestamp: false)
             },
         ]
         if reference.isYouTube, let timestamp = reference.timestamp {
             actions.append(LibraryAction(
-                id: "openAtTimestamp", title: "Open at \(YouTube.formatTime(timestamp))", symbol: "play.circle", keys: ["⌘", "↵"]
+                id: "openAtTimestamp", title: String(localized: "Open at \(YouTube.formatTime(timestamp))"), symbol: "play.circle", keys: ["⌘", "↵"]
             ) { [weak self] in self?.open(reference, atTimestamp: true) })
         }
         actions += [
@@ -36,14 +36,14 @@ extension LibraryController {
             })
         }
         actions += [
-            LibraryAction(id: "edit", title: "Edit Note & Tags", symbol: "pencil", keys: ["⌘", "E"]) { [weak self] in
+            LibraryAction(id: "edit", title: String(localized: "Edit Note & Tags"), symbol: "pencil", keys: ["⌘", "E"]) { [weak self] in
                 self?.beginEdit()
             },
-            LibraryAction(id: "reveal", title: "Reveal in Finder", symbol: "folder", keys: ["⌘", "⇧", "F"]) { [weak self] in
+            LibraryAction(id: "reveal", title: String(localized: "Reveal in Finder"), symbol: "folder", keys: ["⌘", "⇧", "F"]) { [weak self] in
                 self?.reveal(reference)
             },
             toggleLayoutAction,
-            LibraryAction(id: "delete", title: "Delete", symbol: "trash", keys: ["⌘", "⌫"], isDestructive: true) { [weak self] in
+            LibraryAction(id: "delete", title: String(localized: "Delete"), symbol: "trash", keys: ["⌘", "⌫"], isDestructive: true) { [weak self] in
                 self?.requestDelete()
             },
         ]
@@ -53,7 +53,7 @@ extension LibraryController {
     private var toggleLayoutAction: LibraryAction {
         LibraryAction(
             id: "layout",
-            title: layout == .list ? "Show as Grid" : "Show as List",
+            title: layout == .list ? String(localized: "Show as Grid") : String(localized: "Show as List"),
             symbol: layout == .list ? "square.grid.2x2" : "list.bullet",
             keys: ["⌘", "G"]
         ) { [weak self] in self?.toggleLayout() }
@@ -67,10 +67,10 @@ extension LibraryController {
 
     private func copyTitle(for reference: Reference) -> String {
         switch reference.type {
-        case .link: "Copy Link"
-        case .text: "Copy Text"
-        case .image: "Copy Image"
-        case .file: "Copy File"
+        case .link: String(localized: "Copy Link")
+        case .text: String(localized: "Copy Text")
+        case .image: String(localized: "Copy Image")
+        case .file: String(localized: "Copy File")
         }
     }
 

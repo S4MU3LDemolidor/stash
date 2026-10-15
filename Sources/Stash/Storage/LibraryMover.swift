@@ -15,7 +15,7 @@ enum LibraryMover {
         case insideCurrentLibrary
 
         var errorDescription: String? {
-            "Choose a folder outside the current library."
+            String(localized: "Choose a folder outside the current library.")
         }
     }
 

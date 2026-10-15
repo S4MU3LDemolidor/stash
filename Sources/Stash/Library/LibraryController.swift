@@ -8,10 +8,10 @@ enum FilterPill: Equatable, Hashable {
     var label: String {
         switch self {
         case .tag(let tag): tag
-        case .type(.link): "Links"
-        case .type(.text): "Text"
-        case .type(.image): "Images"
-        case .type(.file): "Files"
+        case .type(.link): String(localized: "Links")
+        case .type(.text): String(localized: "Text")
+        case .type(.image): String(localized: "Images")
+        case .type(.file): String(localized: "Files")
         }
     }
 }
