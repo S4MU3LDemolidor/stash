@@ -47,6 +47,14 @@ struct ShelfItem: Codable, Identifiable, Equatable, Sendable {
         return false
     }
 
+    /// Shown by file name (files, folders, promised files), as opposed to a text or a title.
+    var isFileLike: Bool {
+        switch kind {
+        case .file, .stored(_, .file): true
+        case .stored, .link: false
+        }
+    }
+
     var isFolder: Bool {
         if case .file(_, _, let isDirectory) = kind { return isDirectory }
         return false

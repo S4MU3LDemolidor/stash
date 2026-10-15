@@ -6,10 +6,13 @@ struct SettingsView: View {
     @ObservedObject var model: SettingsModel
     /// Shows or hides the menu bar icon right away.
     let onShowMenuBarIconChange: (Bool) -> Void
+    /// Starts or stops shake detection right away.
+    let onShelfShakeChange: (Bool) -> Void
 
     @AppStorage(Preferences.Key.fetchMetadata) private var fetchMetadata = true
     @AppStorage(Preferences.Key.clipboardWindow) private var clipboardWindow: Double = 60
     @AppStorage(Preferences.Key.showMenuBarIcon) private var showMenuBarIcon = true
+    @AppStorage(Preferences.Key.shelfShake) private var shelfShake = true
 
     var body: some View {
         Form {
@@ -57,6 +60,17 @@ struct SettingsView: View {
                 Text("Capture")
             } footer: {
                 Text("Titles, thumbnails and icons come from the site you saved. With this off, Stash makes no network requests at all.")
+                    .foregroundStyle(.secondary)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            }
+
+            Section {
+                Toggle("Shake to open the shelf", isOn: $shelfShake)
+                    .onChange(of: shelfShake) { _, on in onShelfShakeChange(on) }
+            } header: {
+                Text("Shelf")
+            } footer: {
+                Text("While dragging anything, shake the mouse to hold it on a shelf until you drag it out. You can also drop things on Stash's menu bar icon.")
                     .foregroundStyle(.secondary)
                     .frame(maxWidth: .infinity, alignment: .leading)
             }

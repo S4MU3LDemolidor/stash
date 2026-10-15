@@ -7,13 +7,17 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private let panelController = PanelController()
     /// Nil only if the library folder or its index couldn't be opened.
     private(set) var library: LibraryStore?
+    private let shelfStore = ShelfStore()
+    private lazy var shelf = ShelfController(store: shelfStore)
+    private let dragMonitor = DragMonitor()
 
     private lazy var settingsWindowController = SettingsWindowController(
         model: SettingsModel(
             library: { [weak self] in self?.library },
             switchLibrary: { [weak self] url in try self?.switchLibrary(to: url) }
         ),
-        onShowMenuBarIconChange: { [weak self] show in self?.menuBarController?.isVisible = show }
+        onShowMenuBarIconChange: { [weak self] show in self?.menuBarController?.isVisible = show },
+        onShelfShakeChange: { [weak self] on in self?.setShelfShake(on) }
     )
 
     func applicationWillFinishLaunching(_ notification: Notification) {
@@ -26,6 +30,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         menuBarController = MenuBarController(target: self)
         menuBarController?.isVisible = Preferences.showMenuBarIcon
         loadLibrary()
+        setUpShelf()
 
         KeyboardShortcuts.onKeyDown(for: .capture) { [weak self] in
             self?.panelController.toggle(.capture)
@@ -44,7 +49,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
 
         #if DEBUG
-        DebugHooks.install(panel: panelController) { [weak self] in self?.openSettings(nil) }
+        DebugHooks.install(panel: panelController, shelf: shelf) { [weak self] in self?.openSettings(nil) }
         #endif
     }
 
@@ -83,6 +88,24 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         store.scheduleSync()
         library = store
         panelController.library = store
+    }
+
+    // MARK: Shelf
+
+    private func setUpShelf() {
+        dragMonitor.onShake = { [weak self] point in self?.shelf.show(at: point) }
+        dragMonitor.onDragEnded = { [weak self] in self?.shelf.dragEnded() }
+        setShelfShake(Preferences.shelfShake)
+        menuBarController?.onDrop = { [weak self] pasteboard in
+            guard let self, self.shelf.accept(pasteboard) else { return false }
+            if let point = self.menuBarController?.dropPoint { self.shelf.show(at: point) }
+            return true
+        }
+        shelf.restore()
+    }
+
+    private func setShelfShake(_ on: Bool) {
+        if on { dragMonitor.start() } else { dragMonitor.stop() }
     }
 
     // MARK: First launch

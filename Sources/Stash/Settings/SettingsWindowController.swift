@@ -7,11 +7,13 @@ import SwiftUI
 final class SettingsWindowController {
     private let model: SettingsModel
     private let onShowMenuBarIconChange: (Bool) -> Void
+    private let onShelfShakeChange: (Bool) -> Void
     private var window: NSWindow?
 
-    init(model: SettingsModel, onShowMenuBarIconChange: @escaping (Bool) -> Void) {
+    init(model: SettingsModel, onShowMenuBarIconChange: @escaping (Bool) -> Void, onShelfShakeChange: @escaping (Bool) -> Void) {
         self.model = model
         self.onShowMenuBarIconChange = onShowMenuBarIconChange
+        self.onShelfShakeChange = onShelfShakeChange
     }
 
     func show() {
@@ -24,7 +26,7 @@ final class SettingsWindowController {
 
     private func makeWindow() -> NSWindow {
         let controller = NSHostingController(
-            rootView: SettingsView(model: model, onShowMenuBarIconChange: onShowMenuBarIconChange)
+            rootView: SettingsView(model: model, onShowMenuBarIconChange: onShowMenuBarIconChange, onShelfShakeChange: onShelfShakeChange)
         )
         // The window takes the form's size, and follows it (e.g. when a status line appears).
         controller.sizingOptions = [.preferredContentSize]

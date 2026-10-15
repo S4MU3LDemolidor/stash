@@ -12,8 +12,9 @@ import Carbon.HIToolbox
 ///   `image:<path>` does the same with a PNG file (the path can't contain spaces).
 @MainActor
 enum DebugHooks {
-    static func install(panel: PanelController, openSettings: @escaping () -> Void) {
+    static func install(panel: PanelController, shelf: ShelfController, openSettings: @escaping () -> Void) {
         let center = DistributedNotificationCenter.default()
+        installShelf(shelf, center: center)
         center.addObserver(forName: Notification.Name("dev.stash.debug.toggle"), object: nil, queue: .main) { [weak panel] note in
             let target = note.object as? String
             MainActor.assumeIsolated {
@@ -46,6 +47,37 @@ enum DebugHooks {
                     for event in events(for: String(token), windowNumber: windowNumber) {
                         NSApp.postEvent(event, atStart: false)
                     }
+                }
+            }
+        }
+    }
+
+    /// `dev.stash.debug.shelf`, object `sample` (adds sample items and shows the shelf), `show`,
+    /// `expand`, `collapse` or `clear` (no confirmation).
+    private static func installShelf(_ shelf: ShelfController, center: DistributedNotificationCenter) {
+        center.addObserver(forName: Notification.Name("dev.stash.debug.shelf"), object: nil, queue: .main) { [weak shelf] note in
+            let command = note.object as? String ?? ""
+            MainActor.assumeIsolated {
+                guard let shelf else { return }
+                let middle = NSScreen.main.map { NSPoint(x: $0.visibleFrame.midX, y: $0.visibleFrame.midY) } ?? .zero
+                switch command {
+                case "sample":
+                    var items = [
+                        ShelfItem(name: "Landing Page Teardown", kind: .link(URL(string: "https://example.com/teardown")!, title: "Landing Page Teardown")),
+                    ]
+                    if let copy = try? shelf.store.storeCopy(Data("Make the viewer the hero, not the brand.".utf8), fileExtension: "txt") {
+                        items.append(ShelfItem(name: "Make the viewer the hero, not the brand.", kind: .stored(fileName: copy, type: .text)))
+                    }
+                    if let app = try? ShelfItem.file(at: URL(fileURLWithPath: "/System/Library/CoreServices/Finder.app")) {
+                        items.append(app)
+                    }
+                    shelf.store.add(items)
+                    shelf.show(at: middle)
+                case "show": shelf.show(at: middle)
+                case "expand": shelf.setExpanded(true)
+                case "collapse": shelf.setExpanded(false)
+                case "clear": shelf.store.clear()
+                default: break
                 }
             }
         }

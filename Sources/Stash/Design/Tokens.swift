@@ -46,6 +46,8 @@ enum Palette {
     static let border = ColorToken(dark: white(0.12), light: black(0.10))
     static let accent = ColorToken(dark: hex(0xF5A524), light: hex(0xE09400))
     static let danger = ColorToken(dark: hex(0xFF5F57), light: hex(0xE5484D))
+    /// The opaque cards in the shelf's stack.
+    static let shelfCard = ColorToken(dark: rgba(46, 46, 50, 1), light: rgba(246, 246, 247, 1))
 
     private static func rgba(_ r: CGFloat, _ g: CGFloat, _ b: CGFloat, _ a: CGFloat) -> NSColor {
         NSColor(srgbRed: r / 255, green: g / 255, blue: b / 255, alpha: a)

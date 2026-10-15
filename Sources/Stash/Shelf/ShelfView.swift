@@ -28,6 +28,7 @@ struct ShelfView: View {
     let actions: ShelfActions
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
 
     var body: some View {
         VStack(spacing: 0) {
@@ -39,6 +40,8 @@ struct ShelfView: View {
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+        // The same tint over the glass as the main panel (design.md §2).
+        .background(reduceTransparency ? Palette.tint.opaque : Palette.tint)
         .overlay {
             RoundedRectangle(cornerRadius: Metrics.panelCornerRadius, style: .continuous)
                 .strokeBorder(state.dropTargeted ? Palette.accent.color : Palette.border.color,
@@ -112,7 +115,7 @@ struct ShelfView: View {
                 .font(Typography.gridTitle)
                 .foregroundStyle(Palette.textPrimary)
                 .lineLimit(1)
-                .truncationMode(.middle)
+                .truncationMode(store.items.first?.isFileLike == true ? .middle : .tail)
                 .padding(.horizontal, Metrics.rowPadding)
         }
         .padding(.top, Metrics.unit * 2)
@@ -142,7 +145,8 @@ struct ShelfView: View {
                         .font(Typography.rowTitle)
                         .foregroundStyle(Palette.textPrimary)
                         .lineLimit(1)
-                        .truncationMode(.middle)
+                        // File names keep their extension; texts and titles read from the start.
+                        .truncationMode(item.isFileLike ? .middle : .tail)
                     Text(missing ? "Missing" : subtitle(item))
                         .font(Typography.meta)
                         .foregroundStyle(missing ? Palette.danger : Palette.textSecondary)
@@ -193,35 +197,37 @@ struct ShelfView: View {
 
     // MARK: Thumbnails
 
+    /// An opaque card with the item's preview inset (photos fill it), so stacked cards never
+    /// show through each other and icons of any size line up.
     private func thumbnail(_ item: ShelfItem, side: CGFloat) -> some View {
-        Group {
+        let shape = RoundedRectangle(cornerRadius: radius(for: side), style: .continuous)
+        return ZStack {
+            shape.fill(Palette.shelfCard)
             switch item.kind {
             case .link:
-                tile(symbol: "link", side: side)
+                symbol("link", side: side)
             case .stored(_, .text):
-                tile(symbol: "text.quote", side: side)
+                symbol("text.quote", side: side)
             default:
                 if let image = thumbnails.images[item.id] {
                     Image(nsImage: image)
                         .resizable()
                         .aspectRatio(contentMode: .fit)
+                        .padding(side * 0.08)
                 } else {
-                    tile(symbol: item.isFolder ? "folder" : "doc", side: side)
+                    symbol(item.isFolder ? "folder" : "doc", side: side)
                 }
             }
         }
         .frame(width: side, height: side)
-        .clipShape(RoundedRectangle(cornerRadius: radius(for: side), style: .continuous))
+        .clipShape(shape)
+        .overlay(shape.strokeBorder(Palette.border, lineWidth: Metrics.borderWidth))
     }
 
-    private func tile(symbol: String, side: CGFloat) -> some View {
-        RoundedRectangle(cornerRadius: radius(for: side), style: .continuous)
-            .fill(Palette.fillSelected)
-            .overlay {
-                Image(systemName: symbol)
-                    .font(.system(size: side * 0.36, weight: .medium))
-                    .foregroundStyle(Palette.textSecondary)
-            }
+    private func symbol(_ name: String, side: CGFloat) -> some View {
+        Image(systemName: name)
+            .font(.system(size: side * 0.34, weight: .medium))
+            .foregroundStyle(Palette.textSecondary)
     }
 
     private func radius(for side: CGFloat) -> CGFloat {

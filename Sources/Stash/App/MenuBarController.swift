@@ -3,10 +3,14 @@ import KeyboardShortcuts
 
 /// Owns the menu bar item and its menu (design.md §5, "Menu bar").
 /// Holding ⌥ while opening the menu also shows developer commands.
+/// Things dropped on the icon go to the shelf.
 @MainActor
-final class MenuBarController: NSObject, NSMenuDelegate {
+final class MenuBarController: NSObject, NSMenuDelegate, NSWindowDelegate, NSDraggingDestination {
     private let statusItem: NSStatusItem
     private var debugItems: [NSMenuItem] = []
+
+    /// Something was dropped on the menu bar icon. Returns whether it was taken.
+    var onDrop: ((NSPasteboard) -> Bool)?
 
     /// `target` receives the menu actions (see `AppDelegate` commands).
     init(target: AppDelegate) {
@@ -21,11 +25,35 @@ final class MenuBarController: NSObject, NSMenuDelegate {
         let menu = makeMenu(target: target)
         menu.delegate = self
         statusItem.menu = menu
+        // The status item's window only exists once the item is in the menu bar.
+        DispatchQueue.main.async { [weak self] in self?.acceptDrops() }
     }
 
     var isVisible: Bool {
         get { statusItem.isVisible }
         set { statusItem.isVisible = newValue }
+    }
+
+    /// Where the shelf should appear for a drop on the icon: just below it.
+    var dropPoint: NSPoint? {
+        guard let frame = statusItem.button?.window?.frame else { return nil }
+        return NSPoint(x: frame.midX, y: frame.minY - Metrics.shelfCollapsedHeight / 2 - 8)
+    }
+
+    /// The status item's window (which has no delegate of its own) forwards drag messages to
+    /// its delegate.
+    private func acceptDrops() {
+        guard let window = statusItem.button?.window else { return }
+        window.registerForDraggedTypes(ShelfPasteboard.acceptedTypes)
+        window.delegate = self
+    }
+
+    func draggingEntered(_ sender: NSDraggingInfo) -> NSDragOperation {
+        sender.draggingPasteboard.availableType(from: ShelfPasteboard.acceptedTypes) != nil ? .copy : []
+    }
+
+    func performDragOperation(_ sender: NSDraggingInfo) -> Bool {
+        onDrop?(sender.draggingPasteboard) ?? false
     }
 
     func menuNeedsUpdate(_ menu: NSMenu) {
