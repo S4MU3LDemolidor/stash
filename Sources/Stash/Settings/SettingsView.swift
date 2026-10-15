@@ -45,6 +45,7 @@ struct SettingsView: View {
             } footer: {
                 Text(model.libraryStatus ?? String(localized: "Every reference is a Markdown file in this folder. Put it in iCloud Drive to use your library on several Macs."))
                     .foregroundStyle(.secondary)
+                    .multilineTextAlignment(.leading)
                     .frame(maxWidth: .infinity, alignment: .leading)
             }
 
@@ -61,6 +62,7 @@ struct SettingsView: View {
             } footer: {
                 Text("Titles, thumbnails and icons come from the site you saved. With this off, Stash makes no network requests at all.")
                     .foregroundStyle(.secondary)
+                    .multilineTextAlignment(.leading)
                     .frame(maxWidth: .infinity, alignment: .leading)
             }
 
@@ -72,6 +74,7 @@ struct SettingsView: View {
             } footer: {
                 Text("While dragging anything, shake the mouse to hold it on a shelf until you drag it out. You can also drop things on Stash's menu bar icon.")
                     .foregroundStyle(.secondary)
+                    .multilineTextAlignment(.leading)
                     .frame(maxWidth: .infinity, alignment: .leading)
             }
 
@@ -90,7 +93,8 @@ struct SettingsView: View {
                 if !showMenuBarIcon {
                     Text("Open Stash again (from Finder or Spotlight) to get back to Settings.")
                         .foregroundStyle(.secondary)
-                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .multilineTextAlignment(.leading)
+                    .frame(maxWidth: .infinity, alignment: .leading)
                 }
             }
 

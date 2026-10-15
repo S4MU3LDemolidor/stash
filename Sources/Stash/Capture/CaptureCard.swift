@@ -83,7 +83,7 @@ extension CaptureCard {
                 image: preview,
                 title: title ?? url.absoluteString,
                 titleIsPlaceholder: title == nil,
-                subtitle: at.map { "\(site) · at \(YouTube.formatTime($0))" } ?? site,
+                subtitle: at.map { site + " · " + String(localized: "at \(YouTube.formatTime($0))") } ?? site,
                 badge: badge,
                 isLoadingImage: isLoadingImage,
                 isTargeted: isTargeted
