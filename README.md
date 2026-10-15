@@ -29,6 +29,10 @@ looking at, press Enter, done. The same panel lets you search and browse everyth
 
 Every reference is a plain Markdown file in a normal folder. No account, no server, no analytics.
 
+<p align="center">
+  <a href="https://s4mu3ldemolidor.github.io/stash/#film"><img src="docs/film.jpg" alt="Watch the 43-second film" width="720"></a>
+</p>
+
 | Capture | Library | Grid |
 |---|---|---|
 | ![Capture](docs/screenshots/capture.png) | ![Library](docs/screenshots/library.png) | ![Grid](docs/screenshots/grid.png) |

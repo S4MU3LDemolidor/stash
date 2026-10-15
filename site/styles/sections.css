@@ -1,4 +1,18 @@
-/* Statement, features, files, privacy, open source and the final call to action. */
+/* Film, statement, features, files, privacy, open source and the final call to action. */
+
+/* ── Film ────────────────────────────────────────────── */
+
+.film { padding-top: clamp(40px, 6vw, 80px); padding-bottom: 0; }
+.film-frame {
+  max-width: 1040px;
+  border-radius: 20px;
+  overflow: hidden;
+  border: 1px solid var(--border-strong);
+  background: #0a0a0c;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.6), 0 40px 120px -30px rgba(247, 125, 16, 0.3), 0 30px 80px -20px rgba(0, 0, 0, 0.8);
+}
+.film-frame video { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; }
+.film .aside { margin-top: 18px; }
 
 /* ── Statement ───────────────────────────────────────── */
 

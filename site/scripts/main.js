@@ -24,6 +24,15 @@
     reveals.forEach((el) => el.classList.add("in"));
   }
 
+  // The film plays (muted) while it's on screen, unless the viewer prefers reduced motion.
+  const film = document.querySelector("[data-film]");
+  if (film && "IntersectionObserver" in window && !matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) film.play().catch(() => {});
+      else film.pause();
+    }, { threshold: 0.5 }).observe(film);
+  }
+
   // Copy the build-from-source commands.
   for (const button of document.querySelectorAll("[data-copy]")) {
     button.addEventListener("click", async () => {
