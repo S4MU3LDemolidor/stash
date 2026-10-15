@@ -48,6 +48,18 @@ enum LibraryFormatting {
         return date.formatted(.dateTime.month(.abbreviated).day().year())
     }
 
+    /// Capture's duplicate line: `Already saved a moment ago`, `Already saved yesterday`,
+    /// `Already saved 3 weeks ago`.
+    static func alreadySaved(_ date: Date, now: Date = Date()) -> String {
+        guard now.timeIntervalSince(date) >= 60 else { return String(localized: "Already saved a moment ago") }
+        let formatter = RelativeDateTimeFormatter()
+        formatter.locale = AppLocale.current
+        formatter.unitsStyle = .full
+        formatter.dateTimeStyle = .named
+        let ago = formatter.localizedString(for: date, relativeTo: now)
+        return String(localized: "Already saved \(ago)")
+    }
+
     /// Detail pane: `Today, 10:20`, `Yesterday, 10:20`, `Oct 3, 2026, 10:20`.
     static func savedDate(_ date: Date, now: Date = Date(), calendar: Calendar = .current) -> String {
         let time = date.formatted(date: .omitted, time: .shortened)

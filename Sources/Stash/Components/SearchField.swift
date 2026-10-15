@@ -96,6 +96,7 @@ private extension PanelKeyCommand {
         switch selector {
         case #selector(NSResponder.cancelOperation(_:)): self = .cancel
         case #selector(NSResponder.insertNewline(_:)): self = .submit
+        case #selector(NSResponder.insertNewlineIgnoringFieldEditor(_:)): self = .submitAlternate
         case #selector(NSResponder.insertTab(_:)): self = .tab
         case #selector(NSResponder.moveUp(_:)): self = .moveUp
         case #selector(NSResponder.moveDown(_:)): self = .moveDown

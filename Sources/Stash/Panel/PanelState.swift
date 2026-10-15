@@ -16,6 +16,8 @@ enum PanelMode {
 enum PanelKeyCommand {
     case cancel
     case submit
+    /// ⌥↵ (Capture: save a separate copy instead of adding to the existing reference).
+    case submitAlternate
     case tab
     case moveUp
     case moveDown

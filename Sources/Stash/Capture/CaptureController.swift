@@ -47,7 +47,7 @@ final class CaptureController: ObservableObject {
     /// An empty session, with no detection (e.g. the panel opened in Library mode).
     func reset() {
         session.detection?.cancel()
-        session = CaptureSession()
+        session = CaptureSession(library: library)
         autocomplete.reset(knownTags: (try? library?.index.tags().map(\.name)) ?? [])
     }
 
@@ -157,18 +157,35 @@ final class CaptureController: ObservableObject {
         session.item != nil || session.readingBrowser != nil || !TagParser.parse(note).text.isEmpty
     }
 
-    /// Saves the current session, first waiting for a browser read that's still in flight.
-    /// Returns nil when there turned out to be nothing to save.
-    func save(note: String) async throws -> Reference? {
+    enum SaveOutcome: Equatable {
+        case saved(Reference)
+        /// Added to a reference that already held the same thing.
+        case merged(Reference)
+        /// The same thing was already saved, with this note and tags.
+        case alreadySaved(Reference)
+        case nothingToSave
+    }
+
+    /// Saves the current session, first waiting for a browser read and the duplicate check that
+    /// may still be in flight. When the library already has it, adds the note and tags to that
+    /// reference instead, unless `asCopy`.
+    func save(note: String, asCopy: Bool = false) async throws -> SaveOutcome {
         let session = self.session
         await session.detection?.value
+        await session.duplicateCheck?.value
         guard let library else { throw CaptureError.libraryUnavailable }
-        let saved = try await CaptureSaver(library: library).save(session.item, note: note)
-        if let saved {
-            // The link shows right away; its title and thumbnail follow.
-            enricher?.enrich(saved, prefetched: session.metadata)
+        let saver = CaptureSaver(library: library)
+
+        if !asCopy, let existing = session.duplicate {
+            switch try saver.merge(session.item, note: note, into: existing) {
+            case .merged(let reference): return .merged(reference)
+            case .unchanged(let reference): return .alreadySaved(reference)
+            }
         }
-        return saved
+        guard let saved = try await saver.save(session.item, note: note) else { return .nothingToSave }
+        // The link shows right away; its title and thumbnail follow.
+        enricher?.enrich(saved, prefetched: session.metadata)
+        return .saved(saved)
     }
 
     // MARK: Tag autocomplete

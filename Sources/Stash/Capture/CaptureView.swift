@@ -21,6 +21,11 @@ struct CaptureView: View {
                 emptyState
             }
 
+            if let duplicate = session.duplicate, session.item != nil {
+                DuplicateLine(reference: duplicate)
+                    .transition(.opacity)
+            }
+
             if let hint = session.hint {
                 Text(hint)
                     .font(Typography.meta)
@@ -33,6 +38,7 @@ struct CaptureView: View {
             }
         }
         .padding(Metrics.contentInset)
+        .animation(.easeOut(duration: Motion.modeSwitch), value: session.duplicate?.id)
     }
 
     private var emptyState: some View {
@@ -51,5 +57,28 @@ struct CaptureView: View {
                     .foregroundStyle(Palette.textTertiary)
             }
             .accessibilityElement(children: .combine)
+    }
+}
+
+/// "Already saved 3 weeks ago · #hooks #ads": what's captured is in the library, and ↵ adds to it.
+private struct DuplicateLine: View {
+    let reference: Reference
+
+    var body: some View {
+        HStack(spacing: Metrics.unit * 1.5) {
+            Image(systemName: "arrow.triangle.merge")
+                .foregroundStyle(Palette.textTertiary)
+            Text(LibraryFormatting.alreadySaved(reference.created))
+                .foregroundStyle(Palette.textSecondary)
+            if !reference.tags.isEmpty {
+                Text(reference.tags.map { "#" + $0 }.joined(separator: " "))
+                    .foregroundStyle(Palette.textTertiary)
+                    .truncationMode(.tail)
+            }
+        }
+        .font(Typography.meta)
+        .lineLimit(1)
+        .padding(.horizontal, Metrics.unit)
+        .accessibilityElement(children: .combine)
     }
 }

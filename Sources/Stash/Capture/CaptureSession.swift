@@ -7,10 +7,19 @@ import UniformTypeIdentifiers
 final class CaptureSession: ObservableObject {
     @Published var item: CaptureItem? {
         didSet {
-            if item?.content != oldValue?.content { preview = Self.preview(for: item?.content) }
+            if item?.content != oldValue?.content {
+                preview = Self.preview(for: item?.content)
+                checkForDuplicate()
+            }
             if Self.linkURL(item) != Self.linkURL(oldValue) { fetchMetadata(for: Self.linkURL(item)) }
         }
     }
+    /// A reference that already holds what's captured: ↵ adds to it instead of saving a copy.
+    @Published private(set) var duplicate: Reference?
+    /// The duplicate check in progress. Saving waits for it.
+    private(set) var duplicateCheck: Task<Void, Never>?
+    /// Where to look for duplicates (nil: don't).
+    private let library: LibraryStore?
     /// Image preview or file icon for the card.
     @Published private(set) var preview: NSImage?
     /// A link's page image, once fetched.
@@ -27,6 +36,26 @@ final class CaptureSession: ObservableObject {
 
     /// The browser read in progress. Saving waits for it.
     var detection: Task<Void, Never>?
+
+    init(library: LibraryStore? = nil) {
+        self.library = library
+    }
+
+    /// Runs again whenever the content changes (a pasted replacement, the video's position).
+    /// The previous answer stays on screen until the new one arrives, so it doesn't flicker.
+    private func checkForDuplicate() {
+        duplicateCheck?.cancel()
+        guard let content = item?.content, let library else {
+            duplicate = nil
+            duplicateCheck = nil
+            return
+        }
+        duplicateCheck = Task { [weak self] in
+            let found = await DuplicateFinder(library: library).existing(for: content)
+            guard let self, !Task.isCancelled else { return }
+            self.duplicate = found
+        }
+    }
 
     private static func linkURL(_ item: CaptureItem?) -> URL? {
         if case .link(let url, _, _)? = item?.content { return url }

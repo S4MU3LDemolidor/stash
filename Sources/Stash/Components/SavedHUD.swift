@@ -3,6 +3,10 @@ import SwiftUI
 
 enum HUDMessage {
     case saved
+    /// The capture was already saved: its note and tags went to that reference.
+    case merged
+    /// The capture was already saved, note and tags included.
+    case alreadySaved
     case copied
     case nothingToSave
     case failed(String)
@@ -13,6 +17,8 @@ enum HUDMessage {
     var text: String {
         switch self {
         case .saved: "Saved to Stash"
+        case .merged: "Added to the Existing Reference"
+        case .alreadySaved: "Already in Stash"
         case .copied: "Copied to Clipboard"
         case .nothingToSave: "Nothing to save"
         case .failed(let reason): "Couldn't save: \(reason)"
@@ -112,7 +118,8 @@ struct SavedHUDView: View {
 
     private var icon: (name: String, style: ColorToken) {
         switch message {
-        case .saved, .copied: ("checkmark.circle.fill", Palette.accent)
+        case .saved, .copied, .merged: ("checkmark.circle.fill", Palette.accent)
+        case .alreadySaved: ("checkmark.circle.fill", Palette.textTertiary)
         case .welcome: ("", Palette.accent)
         case .nothingToSave: ("minus.circle.fill", Palette.textTertiary)
         case .failed, .shelfFailed: ("exclamationmark.circle.fill", Palette.danger)

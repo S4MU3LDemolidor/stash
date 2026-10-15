@@ -1,3 +1,4 @@
+import AppKit
 import Foundation
 import Testing
 @testable import Stash
@@ -148,5 +149,54 @@ final class DuplicateFinderTests {
             return
         }
         #expect(merged.title == "The Post")
+    }
+
+    // MARK: Capture
+
+    private func capture(_ string: String) -> CaptureController {
+        let controller = CaptureController()
+        controller.library = store
+        controller.reset()
+        let pasteboard = NSPasteboard(name: NSPasteboard.Name("dev.stash.tests.duplicates.\(UUID().uuidString)"))
+        pasteboard.clearContents()
+        pasteboard.setString(string, forType: .string)
+        controller.paste(from: pasteboard)
+        pasteboard.releaseGlobally()
+        return controller
+    }
+
+    @Test func captureWarnsAndReturnMerges() async throws {
+        let existing = try await save(link("https://example.com/post"), note: "#hooks")
+        let controller = capture("https://example.com/post?utm_source=newsletter")
+        await controller.session.duplicateCheck?.value
+        #expect(controller.session.duplicate?.id == existing.id)
+
+        let outcome = try await controller.save(note: "#ads")
+        guard case .merged(let merged) = outcome else {
+            Issue.record("Expected a merge, got \(outcome)")
+            return
+        }
+        #expect(merged.tags == ["hooks", "ads"])
+        #expect(try store.index.count() == 1)
+    }
+
+    @Test func optionReturnSavesACopy() async throws {
+        try await save(link("https://example.com/post"))
+        let controller = capture("https://example.com/post")
+        guard case .saved = try await controller.save(note: "", asCopy: true) else {
+            Issue.record("Expected a new reference")
+            return
+        }
+        #expect(try store.index.count() == 2)
+    }
+
+    @Test func nothingNewIsAlreadySaved() async throws {
+        try await save(.text("One idea per ad."), note: "#copy")
+        let controller = capture("One idea per ad.")
+        guard case .alreadySaved = try await controller.save(note: "#copy") else {
+            Issue.record("Expected already saved")
+            return
+        }
+        #expect(try store.index.count() == 1)
     }
 }

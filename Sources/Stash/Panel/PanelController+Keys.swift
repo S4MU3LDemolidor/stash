@@ -30,6 +30,9 @@ extension PanelController {
                 saveCapture(keepOpen: false)
             }
             return true
+        case .submitAlternate:
+            saveCapture(keepOpen: false, asCopy: true)
+            return true
         case .moveUp, .moveDown:
             guard autocomplete.isShowing else { return false }
             autocomplete.move(by: command == .moveUp ? -1 : 1)
@@ -76,7 +79,7 @@ extension PanelController {
             switch command {
             case .submit: report { try library.commitEdit() }
             case .cancel: library.cancelEdit()
-            case .tab: break
+            case .tab, .submitAlternate: break
             default: return false
             }
             return true
@@ -104,6 +107,9 @@ extension PanelController {
             library.moveSelection(command == .moveLeft ? .left : .right)
         case .deleteBackward:
             return library.removeLastPill()
+        case .submitAlternate:
+            // Swallowed: the field would insert a line break.
+            break
         }
         return true
     }
@@ -116,7 +122,7 @@ extension PanelController {
         case .submit: library.runSelectedAction()
         case .moveUp: library.moveActionSelection(by: -1)
         case .moveDown: library.moveActionSelection(by: 1)
-        case .tab: break
+        case .tab, .submitAlternate: break
         case .moveLeft, .moveRight, .deleteBackward: return false
         }
         return true
@@ -182,8 +188,9 @@ extension PanelController {
     }
 
     /// ↵ closes the panel right away; the file is written in the background (after a browser
-    /// read that's still in flight), then the HUD confirms.
-    func saveCapture(keepOpen: Bool) {
+    /// read that's still in flight), then the HUD confirms. When the library already has it,
+    /// ↵ adds to that reference and ⌥↵ (`asCopy`) saves a separate one.
+    func saveCapture(keepOpen: Bool, asCopy: Bool = false) {
         let note = state.note
         guard capture.canSave(note: note) else {
             NSSound.beep()
@@ -193,11 +200,14 @@ extension PanelController {
 
         Task {
             do {
-                if try await capture.save(note: note) == nil {
+                switch try await capture.save(note: note, asCopy: asCopy) {
+                case .nothingToSave:
                     HUDController.shared.show(.nothingToSave)
                     return
+                case .saved: HUDController.shared.show(.saved)
+                case .merged: HUDController.shared.show(.merged)
+                case .alreadySaved: HUDController.shared.show(.alreadySaved)
                 }
-                HUDController.shared.show(.saved)
                 if keepOpen, isShown {
                     state.note = ""
                     capture.clear()

@@ -26,7 +26,7 @@ struct PanelRootView: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .id(state.mode)
                 .transition(.opacity)
-            PanelActionBar(state: state, library: library)
+            PanelActionBar(state: state, session: capture.session, library: library)
         }
         .animation(.easeInOut(duration: Motion.modeSwitch), value: state.mode)
         .overlay(alignment: .topLeading) {
@@ -121,10 +121,17 @@ private struct SuggestionsOverlay: View {
 /// The bottom bar's context and keys, which change with what ↵ and Esc will do.
 private struct PanelActionBar: View {
     @ObservedObject var state: PanelState
+    @ObservedObject var session: CaptureSession
     @ObservedObject var library: LibraryController
 
     var body: some View {
         switch state.mode {
+        case .capture where session.duplicate != nil && session.item != nil:
+            ActionBar(
+                context: "Already in Stash",
+                primary: ActionBarItem(label: "Add to Existing", keys: ["↵"]),
+                secondary: ActionBarItem(label: "Save Copy", keys: ["⌥", "↵"])
+            )
         case .capture:
             ActionBar(
                 context: "Saving to \(Preferences.libraryDisplayPath)",
