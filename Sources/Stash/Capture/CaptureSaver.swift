@@ -73,4 +73,37 @@ struct CaptureSaver {
             throw error
         }
     }
+
+    enum MergeResult: Equatable {
+        case merged(Reference)
+        /// The reference already had all of it; nothing was written.
+        case unchanged(Reference)
+    }
+
+    /// Adds what's new in this capture to a reference that already holds the same thing:
+    /// tags it doesn't have, the note on a new paragraph (unless it's already there), and a
+    /// link's title if it had none.
+    func merge(_ item: CaptureItem?, note rawNote: String, into existing: Reference) throws -> MergeResult {
+        let note = TagParser.parse(rawNote)
+        var title: String?
+        if case .link(_, let captured, _)? = item?.content { title = captured }
+
+        let addsTags = note.tags.contains { !existing.tags.contains($0) }
+        let addsNote = !note.text.isEmpty && !existing.note.contains(note.text)
+        let addsTitle = existing.type == .link && existing.title == nil && title != nil
+        guard addsTags || addsNote || addsTitle else { return .unchanged(existing) }
+
+        let merged = try library.update(id: existing.id) { reference in
+            for tag in note.tags where !reference.tags.contains(tag) {
+                reference.tags.append(tag)
+            }
+            if !note.text.isEmpty, !reference.note.contains(note.text) {
+                reference.note = reference.note.isEmpty ? note.text : reference.note + "\n\n" + note.text
+            }
+            if reference.type == .link, reference.title == nil, let title {
+                reference.title = title
+            }
+        }
+        return .merged(merged)
+    }
 }

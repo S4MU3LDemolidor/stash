@@ -107,6 +107,34 @@ extension SearchIndex {
         }
     }
 
+    // MARK: Duplicates
+
+    /// Links whose URL contains `needle` (a host or a video ID), newest first.
+    func links(urlContaining needle: String) throws -> [Reference] {
+        let escaped = needle
+            .replacingOccurrences(of: "\\", with: "\\\\")
+            .replacingOccurrences(of: "%", with: "\\%")
+            .replacingOccurrences(of: "_", with: "\\_")
+        return try db.read { db in
+            try Row.fetchAll(db, sql: """
+                SELECT * FROM reference WHERE type = 'link' AND url LIKE ? ESCAPE '\\'
+                ORDER BY created DESC, rowid DESC
+                """, arguments: ["%\(escaped)%"]
+            ).compactMap(Self.reference(from:))
+        }
+    }
+
+    /// Every reference of these types, newest first.
+    func references(ofTypes types: [ReferenceType]) throws -> [Reference] {
+        try db.read { db in
+            try Row.fetchAll(db, sql: """
+                SELECT * FROM reference WHERE type IN (\(types.map { _ in "?" }.joined(separator: ", ")))
+                ORDER BY created DESC, rowid DESC
+                """, arguments: StatementArguments(types.map(\.rawValue))
+            ).compactMap(Self.reference(from:))
+        }
+    }
+
     // MARK: Text inside images
 
     /// Images whose text hasn't been read yet, newest first. Read images without text have "".
