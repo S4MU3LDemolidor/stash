@@ -7,6 +7,10 @@
 </p>
 
 <p align="center">
+  <b>English</b> · <a href="README.pt-BR.md">Português</a> · <a href="README.es.md">Español</a> · <a href="README.fr.md">Français</a>
+</p>
+
+<p align="center">
   <a href="https://s4mu3ldemolidor.github.io/stash/">Website</a> ·
   <a href="https://github.com/S4MU3LDemolidor/stash/releases/latest">Download</a> ·
   <a href="#install">Install</a> ·
@@ -53,10 +57,14 @@ makes saving take two keystrokes and finding take one, and keeps everything as f
   always wins over the tab.
 - **Notes and tags**: type `great hook in the first 3s #hooks #thumbnails` before pressing Enter.
   `#` suggests the tags you already use.
+- **Already saved?** Capture tells you ("Already saved 3 weeks ago"), and `↵` adds your new note
+  and tags to that reference instead of making a second one. `⌥↵` saves a separate copy.
 - **Library** (`⌥⇧L`, or `⇥` from Capture): instant search on every keystroke across titles,
-  notes, tags, sites and the text inside saved PDFs and text files. Filter with `#tag` or
+  notes, tags, sites and the text inside saved PDFs, text files and images. Filter with `#tag` or
   `type:image`, `type:link`, `type:text`, `type:file`. Results grouped by Today, Yesterday,
   This Week and Earlier.
+- **Text in images**: screenshots and ad creatives are searchable by what they say. Stash reads
+  the text on your Mac with Apple's Vision and shows it in the detail pane (`⌘K` copies it).
 - **List and grid**: a list with a preview pane, or a grid (`⌘G`) for browsing visually.
 - **Actions** (`⌘K`): open, open at the timestamp, copy, edit note and tags, reveal in Finder,
   delete (to the Trash).
@@ -68,9 +76,20 @@ makes saving take two keystrokes and finding take one, and keeps everything as f
 - **Shelf**: while dragging anything (files, folders, images, text, links), shake the mouse and
   a shelf appears under the cursor. Drop it there, go wherever you need, and drag it back out
   later. You can also drop things on the menu bar icon.
+- **In your language**: English, Português (Brasil), Español and Français. Stash follows your
+  Mac's language; pick another one just for Stash in **System Settings › General › Language &
+  Region › Applications**.
 - **Native**: light and dark mode, VoiceOver, Reduce Motion and Reduce Transparency.
 
 ## Install
+
+With [Homebrew](https://brew.sh):
+
+```sh
+brew install --cask s4mu3ldemolidor/tap/stash-references
+```
+
+Or by hand:
 
 1. Download **`Stash-x.y.z.dmg`** from the [latest release](https://github.com/S4MU3LDemolidor/stash/releases/latest).
 2. Open it and drag **Stash** onto **Applications**.
@@ -82,6 +101,9 @@ makes saving take two keystrokes and finding take one, and keeps everything as f
    ```
 4. Stash lives in the **menu bar** (the tray icon); it has no Dock icon. A hint shows the
    shortcut the first time. Press `⌥⇧S` to capture.
+
+Stash isn't notarized yet, so with Homebrew too, the first launch needs **Open Anyway** (step 3).
+Homebrew updates it with `brew upgrade`.
 
 Requires macOS 14 Sonoma or later. To start Stash automatically, turn on **Settings › Launch at login**.
 
@@ -95,6 +117,10 @@ Requires macOS 14 Sonoma or later. To start Stash automatically, turn on **Setti
 3. Optionally type a note with `#tags`.
 4. Press `↵`. The panel closes and **Saved to Stash** confirms it. (`⌘↵` saves and keeps the
    panel open for the next one.)
+
+If it's already in your library (the same page, even shared with tracking parameters; the same
+moment of a video; the same text, image or file), the card says **Already saved** and `↵` adds
+your note and tags to that reference. `⌥↵` saves a separate copy anyway.
 
 ### Library
 
@@ -119,6 +145,7 @@ the menu bar icon also puts them on the shelf. Turn shaking off in **Settings �
 |---|---|---|
 | `↵` | Save | Open |
 | `⌘↵` | Save and keep the panel open | Open at timestamp |
+| `⌥↵` | Save a copy of something already saved | |
 | `⇥` | Switch to Library | Switch to Capture |
 | `↑ ↓ ← →` | Pick a tag suggestion | Move the selection (← → in the grid) |
 | `⌘K` | | Actions |
@@ -167,6 +194,8 @@ Stash does not need Accessibility, Screen Recording, Full Disk Access or any oth
   the site itself (for YouTube: its public oEmbed endpoint and thumbnail images). No cookies are
   sent or kept. Turn it off in **Settings › Capture › Fetch titles & thumbnails** and Stash makes
   no network requests at all.
+- **Text in images** is read on your Mac by Apple's Vision framework and kept only in the search
+  index; your files don't change.
 - **The shelf** stays on your Mac too: files are kept as references to the originals, and
   dragged images, text and links as small private copies in
   `~/Library/Application Support/Stash/Shelf/`. It never touches your library or the network,
@@ -186,7 +215,7 @@ Stash does not need Accessibility, Screen Recording, Full Disk Access or any oth
     icons/youtube.com.png              ← one icon per site
 
 ~/Library/Application Support/Stash/
-  index.sqlite                ← search index; a cache, rebuilt from the files at any time
+  index.sqlite                ← search index (and text read from images); a cache, rebuilt from the files at any time
   Shelf/                      ← what's on the shelf (shelf.json + private copies in Items/)
 ```
 
@@ -235,14 +264,24 @@ scripts/run.sh
 | `scripts/build-app.sh` | Build `build/Stash.app` (release, ad-hoc signed) |
 | `scripts/make-dmg.sh` | Build the app and `build/Stash-<version>.dmg` |
 | `swift test` | Run the tests |
+| `scripts/check-strings.sh` | Check every language's strings against the code |
 | `swift scripts/make-icon.swift` | Regenerate `Support/AppIcon.icns` from the icon artwork |
 
 Set `STASH_VERSION` (and optionally `STASH_BUILD`) for versioned builds, e.g.
-`STASH_VERSION=0.2.0 scripts/make-dmg.sh`.
+`STASH_VERSION=0.3.0 scripts/make-dmg.sh`.
+
+**Translations:** `Support/Localization/<language>.lproj/Localizable.strings`, one table per
+language, where each key is the English text. After changing UI text, run
+`scripts/check-strings.sh sync-en` to update the English table, then translate the new keys
+(`scripts/check-strings.sh missing pt-BR` lists them). CI fails when a language is missing a string.
 
 **Website:** `site/` is published to GitHub Pages on every push to `main` that changes it
-(see [`.github/workflows/pages.yml`](.github/workflows/pages.yml)). Preview it with
-`python3 -m http.server 8080 --directory site`.
+(see [`.github/workflows/pages.yml`](.github/workflows/pages.yml)). `site/index.html` is the
+English page; `python3 site/i18n/build.py` writes the other languages from `site/i18n/*.json`.
+Preview it with `python3 site/i18n/build.py && python3 -m http.server 8080 --directory site`.
+
+**Homebrew:** the cask lives in [S4MU3LDemolidor/homebrew-tap](https://github.com/S4MU3LDemolidor/homebrew-tap)
+(its source is in [`packaging/homebrew-tap`](packaging/homebrew-tap)) and updates itself daily from the latest release.
 
 **Releases:** pushing a tag like `v0.1.0` makes GitHub Actions build, test and publish
 `Stash-0.1.0.dmg` and `Stash-0.1.0.zip` (see [`.github/workflows/build.yml`](.github/workflows/build.yml)).
@@ -253,6 +292,7 @@ Set `STASH_VERSION` (and optionally `STASH_BUILD`) for versioned builds, e.g.
   references, tagged `#sample`).
 - `open build/Stash.app --args -libraryPath /tmp/stash-test` uses another library for one run.
 - `open build/Stash.app --args -StashShowPanel library` opens the panel at launch.
+- `open build/Stash.app --args -AppleLanguages "(pt-BR)"` runs Stash in another language.
 - Debug builds (`.build/debug/Stash`) can be driven by scripts: see
   [`Sources/Stash/App/DebugHooks.swift`](Sources/Stash/App/DebugHooks.swift).
 
@@ -262,18 +302,19 @@ Set `STASH_VERSION` (and optionally `STASH_BUILD`) for versioned builds, e.g.
 Sources/Stash/
   App/          entry point, menu bar, debug commands
   Panel/        the floating panel, its keyboard map
-  Capture/      browser tab, clipboard, paste and drop, saving
+  Capture/      browser tab, clipboard, paste and drop, saving, duplicates
   Library/      search, list, detail pane, grid, ⌘K actions
   Components/   search bar, action bar, keycaps, pills, HUD
   Model/        references, tags, slugs, IDs
-  Storage/      Markdown files, folder sync, search index (GRDB + FTS5)
+  Storage/      Markdown files, folder sync, search index (GRDB + FTS5), text in images
   Enrichment/   YouTube, titles and thumbnails
   Settings/     preferences and the Settings window
   Shelf/        the shake-to-open shelf
   Design/       design tokens and the Stash mark
-Support/        Info.plist, entitlements, app icon
+Support/        Info.plist, entitlements, app icon, translations (Localization/)
 docs/           brand assets and screenshots
 site/           the website (plain HTML, CSS and JS; published to GitHub Pages)
+packaging/      the Homebrew tap's source
 ```
 
 Built with Swift, SwiftUI and AppKit, plus two libraries:
