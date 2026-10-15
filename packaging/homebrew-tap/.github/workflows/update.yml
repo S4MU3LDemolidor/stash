@@ -1,0 +1,38 @@
+# Keeps the cask on Stash's latest release: every day, and on demand (Actions › Update cask ›
+# Run workflow). Only commits when there's a new version.
+name: Update cask
+
+on:
+  schedule:
+    - cron: "17 6 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Point the cask at the latest release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          CASK=Casks/stash-references.rb
+          TAG="$(gh release view --repo S4MU3LDemolidor/stash --json tagName --jq .tagName)"
+          VERSION="${TAG#v}"
+          CURRENT="$(sed -n 's/^  version "\(.*\)"$/\1/p' "$CASK")"
+          if [ "$VERSION" = "$CURRENT" ]; then
+            echo "Already at $VERSION."
+            exit 0
+          fi
+          URL="https://github.com/S4MU3LDemolidor/stash/releases/download/$TAG/Stash-$VERSION.dmg"
+          SHA="$(curl -fsSL "$URL" | sha256sum | cut -d' ' -f1)"
+          sed -i -e "s/^  version \".*\"$/  version \"$VERSION\"/" -e "s/^  sha256 \".*\"$/  sha256 \"$SHA\"/" "$CASK"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -am "stash-references $VERSION"
+          git push
