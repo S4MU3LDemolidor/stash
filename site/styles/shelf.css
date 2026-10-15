@@ -1,0 +1,260 @@
+/* The Shelf section: copy, and a looping illustration of a drag paused on the shelf.
+   The stage is a 560×380 canvas laid out in container units (1cqw = 5.6 px of the canvas),
+   so the whole animation scales with the column. */
+
+.shelf-feature {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  gap: clamp(32px, 6vw, 80px);
+  align-items: center;
+}
+.shelf-feature > * { width: 100%; min-width: 0; margin: 0; }
+.shelf-feature h2 { font-size: clamp(34px, 4.6vw, 56px); }
+.shelf-feature .lead { margin-top: 20px; color: var(--text-2); font-size: 18px; }
+.shelf-feature ul { margin: 28px 0 0; padding: 0; list-style: none; display: grid; gap: 14px; }
+.shelf-feature li { position: relative; padding-left: 28px; color: var(--text-2); }
+.shelf-feature li b { color: var(--text); font-weight: 600; }
+.shelf-feature li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.62em;
+  width: 12px;
+  height: 2px;
+  border-radius: 1px;
+  background: var(--brand);
+}
+.shelf-stage.reveal { --delay: 0.1s; }
+
+/* Hero announcement. */
+.news-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 28px;
+  padding: 6px 14px 6px 6px;
+  border-radius: 999px;
+  border: 1px solid var(--border-strong);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-2);
+  font-size: 14px;
+  transition: border-color 0.2s, color 0.2s;
+}
+.news-pill b {
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: var(--brand);
+  color: #241503;
+  font-size: 12px;
+  font-weight: 600;
+}
+.news-pill:hover { color: var(--text); border-color: rgba(245, 165, 36, 0.5); }
+
+/* ── Stage ───────────────────────────────────────────── */
+
+.shelf-stage {
+  container-type: inline-size;
+  position: relative;
+  aspect-ratio: 560 / 380;
+  border-radius: 18px;
+  overflow: hidden;
+  border: 1px solid var(--border-strong);
+  background:
+    radial-gradient(ellipse 70% 60% at 80% 110%, rgba(247, 125, 16, 0.35), transparent 60%),
+    linear-gradient(160deg, #19120b, #0b0907 60%, #140a04);
+  box-shadow: 0 40px 100px -40px rgba(247, 125, 16, 0.4), 0 20px 50px -20px rgba(0, 0, 0, 0.8);
+}
+
+.fw {
+  position: absolute;
+  top: 10.7cqw;
+  width: 39.3cqw;
+  height: 42.9cqw;
+  border-radius: 2cqw;
+  background: rgba(30, 30, 33, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 3cqw 6cqw rgba(0, 0, 0, 0.45);
+}
+.fw-left { left: 5.36cqw; }
+.fw-right { left: 55.36cqw; animation: sf-target 8s infinite; }
+.fw-bar {
+  display: flex;
+  align-items: center;
+  gap: 2.4cqw;
+  height: 6.4cqw;
+  padding: 0 2.2cqw;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 2.2cqw;
+}
+.fw-bar .dots { display: flex; gap: 0.9cqw; }
+.fw-bar .dots i { width: 1.5cqw; height: 1.5cqw; border-radius: 50%; background: #ff5f57; }
+.fw-bar .dots i:nth-child(2) { background: #febc2e; }
+.fw-bar .dots i:nth-child(3) { background: #28c840; }
+
+/* A PDF icon drawn in CSS. */
+.doc {
+  position: relative;
+  display: block;
+  width: 7.2cqw;
+  height: 9cqw;
+  border-radius: 0.8cqw;
+  background:
+    linear-gradient(#e5484d, #e5484d) 50% 72% / 70% 18% no-repeat,
+    linear-gradient(#d9d9de, #d9d9de) 22% 26% / 50% 5% no-repeat,
+    linear-gradient(#d9d9de, #d9d9de) 22% 40% / 56% 5% no-repeat,
+    #fafafa;
+  box-shadow: 0 0.6cqw 1.4cqw rgba(0, 0, 0, 0.35);
+}
+
+.sf-file {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1cqw;
+  width: 14cqw;
+  margin-left: -7cqw;
+  margin-top: -5cqw;
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 2.1cqw;
+}
+.file-left { left: 19.64cqw; top: 30.36cqw; animation: sf-left 8s infinite; }
+.file-right { left: 75cqw; top: 33.93cqw; opacity: 0; animation: sf-right 8s infinite; }
+
+.mini-shelf {
+  position: absolute;
+  left: 29.29cqw;
+  top: 33.39cqw;
+  width: 23.57cqw;
+  height: 26.79cqw;
+  border-radius: 2.2cqw;
+  background: rgba(32, 32, 36, 0.94);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow: 0 3cqw 7cqw rgba(0, 0, 0, 0.55);
+  opacity: 0;
+  transform: scale(0.85);
+  animation: sf-shelf 8s infinite;
+}
+.ms-head {
+  display: flex;
+  justify-content: space-between;
+  padding: 1.6cqw 2.2cqw 0;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 1.9cqw;
+}
+.ms-head b { font-weight: 600; }
+.ms-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1cqw;
+  margin-top: 2.6cqw;
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 1.9cqw;
+  opacity: 0;
+  animation: sf-item 8s infinite;
+}
+
+.shake-hint {
+  position: absolute;
+  left: 41cqw;
+  top: 51cqw;
+  padding: 0.6cqw 1.6cqw;
+  border-radius: 999px;
+  background: var(--brand);
+  color: #241503;
+  font-size: 1.9cqw;
+  font-weight: 600;
+  translate: -50% 0;
+  opacity: 0;
+  animation: sf-hint 8s infinite;
+}
+
+.sf-ghost {
+  position: absolute;
+  left: 0;
+  top: 0;
+  margin: -3cqw 0 0 -2.4cqw;
+  opacity: 0;
+  animation: sf-cursor 8s infinite, sf-ghost 8s infinite;
+}
+.sf-ghost .doc { opacity: 0.85; transform: rotate(-4deg); }
+
+.sf-cursor {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 4.2cqw;
+  height: 4.2cqw;
+  filter: drop-shadow(0 0.4cqw 0.8cqw rgba(0, 0, 0, 0.5));
+  animation: sf-cursor 8s infinite;
+}
+
+/* The path: grab the file, drag, shake, drop on the shelf, wander off, come back, drag the
+   stack into the other folder, drop, move away. */
+@keyframes sf-cursor {
+  0%, 5% { transform: translate(19.64cqw, 30.36cqw); }
+  14% { transform: translate(41.07cqw, 42.86cqw); }
+  16% { transform: translate(36.61cqw, 42.86cqw); }
+  18% { transform: translate(45.54cqw, 42.86cqw); }
+  20% { transform: translate(36.61cqw, 42.86cqw); }
+  22% { transform: translate(45.54cqw, 42.86cqw); }
+  24% { transform: translate(41.07cqw, 42.86cqw); }
+  31% { transform: translate(41.07cqw, 44.64cqw); }
+  40% { transform: translate(80.36cqw, 21.43cqw); }
+  46% { transform: translate(83.93cqw, 26.79cqw); }
+  50% { transform: translate(80.36cqw, 21.43cqw); }
+  57%, 60% { transform: translate(41.07cqw, 44.64cqw); }
+  70%, 73% { transform: translate(75cqw, 33.93cqw); }
+  85% { transform: translate(88cqw, 52cqw); }
+  100% { transform: translate(19.64cqw, 30.36cqw); }
+}
+@keyframes sf-ghost {
+  0%, 5% { opacity: 0; }
+  6%, 30% { opacity: 1; }
+  31%, 59% { opacity: 0; }
+  60%, 72% { opacity: 1; }
+  73%, 100% { opacity: 0; }
+}
+@keyframes sf-hint {
+  0%, 13% { opacity: 0; }
+  15%, 23% { opacity: 1; }
+  26%, 100% { opacity: 0; }
+}
+@keyframes sf-shelf {
+  0%, 24% { opacity: 0; transform: scale(0.85); }
+  27%, 72% { opacity: 1; transform: scale(1); }
+  76%, 100% { opacity: 0; transform: scale(0.9); }
+}
+@keyframes sf-item {
+  0%, 30% { opacity: 0; transform: scale(0.6); }
+  33%, 59% { opacity: 1; transform: scale(1); }
+  60%, 100% { opacity: 0; transform: scale(1); }
+}
+@keyframes sf-left {
+  0%, 72% { opacity: 1; }
+  73%, 96% { opacity: 0; }
+  99%, 100% { opacity: 1; }
+}
+@keyframes sf-right {
+  0%, 72% { opacity: 0; transform: scale(0.8); }
+  75%, 95% { opacity: 1; transform: scale(1); }
+  98%, 100% { opacity: 0; transform: scale(1); }
+}
+@keyframes sf-target {
+  0%, 63% { border-color: rgba(255, 255, 255, 0.1); }
+  66%, 73% { border-color: rgba(245, 165, 36, 0.8); }
+  77%, 100% { border-color: rgba(255, 255, 255, 0.1); }
+}
+
+/* Reduce Motion: one still frame, the file resting on the shelf. */
+@media (prefers-reduced-motion: reduce) {
+  .shelf-stage *, .shelf-stage { animation: none !important; }
+  .mini-shelf, .ms-item { opacity: 1; transform: none; }
+  .sf-cursor { transform: translate(41.07cqw, 44.64cqw); }
+}
+
+@media (max-width: 980px) {
+  .shelf-feature { grid-template-columns: minmax(0, 1fr); }
+}
