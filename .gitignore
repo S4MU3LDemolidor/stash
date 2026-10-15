@@ -5,3 +5,6 @@
 /.swiftpm/
 *.xcodeproj
 xcuserdata/
+
+# Local Claude Code config (dev-server launch settings)
+/.claude/

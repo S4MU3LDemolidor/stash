@@ -33,7 +33,7 @@ Every reference is a plain Markdown file in a normal folder. No account, no serv
 |---|---|---|
 | ![Capture](docs/screenshots/capture.png) | ![Library](docs/screenshots/library.png) | ![Grid](docs/screenshots/grid.png) |
 
-<sub>Screenshots use the built-in sample data.</sub>
+<sub>Screenshots show sample references; all the artwork in them is original.</sub>
 
 ## Why
 

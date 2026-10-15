@@ -15,7 +15,7 @@ jobs:
     permissions:
       contents: write # to publish releases from tags
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0 # build number = commit count
 
@@ -38,7 +38,7 @@ jobs:
           ditto -c -k --keepParent build/Stash.app "build/Stash-$VERSION.zip"
 
       - name: Keep the build
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: Stash-${{ env.VERSION }}
           path: |

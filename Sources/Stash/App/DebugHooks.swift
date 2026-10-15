@@ -8,7 +8,8 @@ import Carbon.HIToolbox
 /// - `dev.stash.debug.toggle`, object `"capture"` or `"library"`: like pressing the shortcut;
 ///   `"settings"` opens Settings.
 /// - `dev.stash.debug.keys`, object e.g. `"text:hoo down cmd+k esc"`: key presses, in order.
-///   `paste:<text>` pastes into Capture from a private pasteboard (the clipboard isn't touched).
+///   `paste:<text>` pastes into Capture from a private pasteboard (the clipboard isn't touched);
+///   `image:<path>` does the same with a PNG file (the path can't contain spaces).
 @MainActor
 enum DebugHooks {
     static func install(panel: PanelController, openSettings: @escaping () -> Void) {
@@ -30,6 +31,15 @@ enum DebugHooks {
                         let pasteboard = NSPasteboard(name: NSPasteboard.Name("dev.stash.debug.paste"))
                         pasteboard.clearContents()
                         pasteboard.setString(String(token.dropFirst("paste:".count)), forType: .string)
+                        panel.capture.paste(from: pasteboard)
+                        continue
+                    }
+                    if token.hasPrefix("image:") {
+                        let path = String(token.dropFirst("image:".count))
+                        guard let data = FileManager.default.contents(atPath: path) else { continue }
+                        let pasteboard = NSPasteboard(name: NSPasteboard.Name("dev.stash.debug.paste"))
+                        pasteboard.clearContents()
+                        pasteboard.setData(data, forType: .png)
                         panel.capture.paste(from: pasteboard)
                         continue
                     }
