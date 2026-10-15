@@ -1,6 +1,6 @@
 cask "stash-references" do
-  version "0.2.0"
-  sha256 "22348739fa9e10c1e2db2c2c578f73b7d260a714c72b4cb9078e3ec53c0a315f"
+  version "0.3.0"
+  sha256 "2b26f0de047d6bf4d9011edfecea42b5e5a2baa5def3e083920278056617a1a4"
 
   url "https://github.com/S4MU3LDemolidor/stash/releases/download/v#{version}/Stash-#{version}.dmg"
   name "Stash"
