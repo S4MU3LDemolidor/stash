@@ -169,6 +169,16 @@ enum Metrics {
     // Settings window
     static let settingsWidth: CGFloat = 480
     static let emptyIconSize: CGFloat = 32
+
+    // Shelf
+    static let shelfWidth: CGFloat = 176
+    static let shelfCollapsedHeight: CGFloat = 214
+    static let shelfExpandedWidth: CGFloat = 300
+    static let shelfHeaderHeight: CGFloat = 30
+    static let shelfThumb: CGFloat = 100
+    static let shelfRowHeight: CGFloat = 44
+    static let shelfRowThumb: CGFloat = 28
+    static let shelfMaxVisibleRows = 6
 }
 
 // MARK: - Motion (§7)
@@ -188,4 +198,7 @@ enum Motion {
     static let shimmer: TimeInterval = 1.2
     /// The first-launch hint stays up longer than the Saved HUD.
     static let welcomeHold: TimeInterval = 4
+    static let shelfAppear: TimeInterval = 0.16
+    /// After a drag ends, how long an empty shelf waits (for the drop to land) before fading.
+    static let shelfEmptyGrace: TimeInterval = 0.6
 }

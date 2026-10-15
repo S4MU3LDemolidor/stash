@@ -1,4 +1,4 @@
-import Foundation
+import AppKit
 import KeyboardShortcuts
 
 /// User preferences, stored in UserDefaults. Edited in the Settings window.
@@ -13,6 +13,10 @@ enum Preferences {
         static let fetchMetadata = "fetchMetadata"
         static let showMenuBarIcon = "showMenuBarIcon"
         static let didShowWelcome = "didShowWelcome"
+        /// Shaking a drag opens the shelf. Default on.
+        static let shelfShake = "shelfShake"
+        /// Where the shelf was last (bottom-left, screen coordinates), as `NSStringFromPoint`.
+        static let shelfOrigin = "shelfOrigin"
     }
 
     /// Default on. When off, Stash makes no network requests at all.
@@ -27,6 +31,15 @@ enum Preferences {
 
     static var showMenuBarIcon: Bool {
         UserDefaults.standard.object(forKey: Key.showMenuBarIcon) as? Bool ?? true
+    }
+
+    static var shelfShake: Bool {
+        UserDefaults.standard.object(forKey: Key.shelfShake) as? Bool ?? true
+    }
+
+    static var shelfOrigin: NSPoint? {
+        get { UserDefaults.standard.string(forKey: Key.shelfOrigin).map(NSPointFromString) }
+        set { UserDefaults.standard.set(newValue.map(NSStringFromPoint), forKey: Key.shelfOrigin) }
     }
 
     /// The library folder: `libraryPath` if set, otherwise `~/Stash`.

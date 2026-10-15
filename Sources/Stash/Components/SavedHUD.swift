@@ -6,6 +6,7 @@ enum HUDMessage {
     case copied
     case nothingToSave
     case failed(String)
+    case shelfFailed
     /// First launch: how to capture, with the shortcut's keys.
     case welcome(keys: [String])
 
@@ -15,6 +16,7 @@ enum HUDMessage {
         case .copied: "Copied to Clipboard"
         case .nothingToSave: "Nothing to save"
         case .failed(let reason): "Couldn't save: \(reason)"
+        case .shelfFailed: "Couldn't add to the shelf"
         case .welcome(let keys): "Stash is ready. Press \(keys.joined()) to capture."
         }
     }
@@ -113,7 +115,7 @@ struct SavedHUDView: View {
         case .saved, .copied: ("checkmark.circle.fill", Palette.accent)
         case .welcome: ("", Palette.accent)
         case .nothingToSave: ("minus.circle.fill", Palette.textTertiary)
-        case .failed: ("exclamationmark.circle.fill", Palette.danger)
+        case .failed, .shelfFailed: ("exclamationmark.circle.fill", Palette.danger)
         }
     }
 
