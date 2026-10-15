@@ -3,14 +3,20 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Stash — Save anything in two keystrokes</title>
-  <meta name="description" content="Stash is a free, open source macOS menu bar app for saving references. Grab the tab you're on, the second of the video, the screenshot you copied — and keep it as plain Markdown on your Mac.">
+  <title data-i18n="meta.title">Stash — Save anything in two keystrokes</title>
+  <meta name="description" data-i18n-attr="content:meta.description" content="Stash is a free, open source macOS menu bar app for saving references. Grab the tab you're on, the second of the video, the screenshot you copied — and keep it as plain Markdown on your Mac.">
   <meta name="theme-color" content="#07070a">
-  <meta property="og:title" content="Stash — Save anything in two keystrokes. Find it again in one.">
-  <meta property="og:description" content="A free, open source, fully local macOS menu bar app for saving references.">
+  <meta property="og:title" data-i18n-attr="content:meta.ogTitle" content="Stash — Save anything in two keystrokes. Find it again in one.">
+  <meta property="og:description" data-i18n-attr="content:meta.ogDescription" content="A free, open source, fully local macOS menu bar app for saving references.">
   <meta property="og:image" content="https://s4mu3ldemolidor.github.io/stash/assets/og.png">
-  <meta property="og:url" content="https://s4mu3ldemolidor.github.io/stash/">
-  <link rel="canonical" href="https://s4mu3ldemolidor.github.io/stash/">
+  <meta property="og:url" content="https://s4mu3ldemolidor.github.io/stash/" data-i18n-url>
+  <meta property="og:locale" content="en_US" data-i18n-locale>
+  <link rel="canonical" href="https://s4mu3ldemolidor.github.io/stash/" data-i18n-url>
+  <link rel="alternate" hreflang="en" href="https://s4mu3ldemolidor.github.io/stash/">
+  <link rel="alternate" hreflang="pt-BR" href="https://s4mu3ldemolidor.github.io/stash/pt-br/">
+  <link rel="alternate" hreflang="es" href="https://s4mu3ldemolidor.github.io/stash/es/">
+  <link rel="alternate" hreflang="fr" href="https://s4mu3ldemolidor.github.io/stash/fr/">
+  <link rel="alternate" hreflang="x-default" href="https://s4mu3ldemolidor.github.io/stash/">
   <meta property="og:type" content="website">
   <meta name="twitter:card" content="summary_large_image">
   <link rel="icon" type="image/png" href="assets/favicon.png">
@@ -27,29 +33,42 @@
   <link rel="stylesheet" href="styles/keyboard.css">
   <link rel="stylesheet" href="styles/sections.css">
   <link rel="stylesheet" href="styles/shelf.css">
+  <link rel="stylesheet" href="styles/new.css">
 </head>
 <body>
-  <a class="skip" href="#main">Skip to content</a>
+  <a class="skip" href="#main" data-i18n="nav.skip">Skip to content</a>
 
   <header class="nav">
-    <a class="nav-brand" href="#top" aria-label="Stash home">
+    <a class="nav-brand" href="#top" aria-label="Stash home" data-i18n-attr="aria-label:nav.home">
       <img src="assets/mark.png" alt="" width="20" height="23">
       <span>Stash</span>
     </a>
-    <nav class="nav-links" aria-label="Sections">
-      <a href="#shelf">Shelf</a>
-      <a href="#features">Features</a>
-      <a href="#keyboard">Keyboard</a>
-      <a href="#files">Your files</a>
-      <a href="#privacy">Privacy</a>
-      <a href="#open-source">Open source</a>
+    <nav class="nav-links" aria-label="Sections" data-i18n-attr="aria-label:nav.sections">
+      <a href="#new" data-i18n="nav.new">New</a>
+      <a href="#features" data-i18n="nav.features">Features</a>
+      <a href="#keyboard" data-i18n="nav.keyboard">Keyboard</a>
+      <a href="#files" data-i18n="nav.files">Your files</a>
+      <a href="#privacy" data-i18n="nav.privacy">Privacy</a>
+      <a href="#open-source" data-i18n="nav.openSource">Open source</a>
     </nav>
     <div class="nav-actions">
-      <a class="nav-github" href="https://github.com/S4MU3LDemolidor/stash" aria-label="Stash on GitHub">
+      <details class="lang-menu" data-lang-menu>
+        <summary aria-label="Language" data-i18n-attr="aria-label:nav.language">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c2.4 2.4 3.5 5.2 3.5 8.5s-1.1 6.1-3.5 8.5c-2.4-2.4-3.5-5.2-3.5-8.5S9.6 5.9 12 3.5z"/></svg>
+          <span data-lang-code>EN</span>
+        </summary>
+        <div class="lang-list">
+          <a href="./" hreflang="en" lang="en" data-lang="en" aria-current="page">English</a>
+          <a href="pt-br/" hreflang="pt-BR" lang="pt-BR" data-lang="pt-br">Português</a>
+          <a href="es/" hreflang="es" lang="es" data-lang="es">Español</a>
+          <a href="fr/" hreflang="fr" lang="fr" data-lang="fr">Français</a>
+        </div>
+      </details>
+      <a class="nav-github" href="https://github.com/S4MU3LDemolidor/stash" aria-label="Stash on GitHub" data-i18n-attr="aria-label:nav.github">
         <svg viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
         <span data-stars>GitHub</span>
       </a>
-      <a class="button button-small" href="https://github.com/S4MU3LDemolidor/stash/releases/latest" data-download>Download</a>
+      <a class="button button-small" href="https://github.com/S4MU3LDemolidor/stash/releases/latest" data-download data-i18n="nav.download">Download</a>
     </div>
   </header>
 
@@ -64,30 +83,30 @@
         <span class="beam beam-5"></span>
       </div>
       <div class="hero-content">
-        <img class="hero-icon reveal" src="assets/icon.png" alt="The Stash app icon" width="132" height="132">
-        <a class="news-pill reveal" href="#shelf"><b>New</b> The Shelf: shake to hold anything <span aria-hidden="true">&rarr;</span></a>
-        <h1 class="reveal">Save anything in two keystrokes. <span class="dim">Find it again in one.</span></h1>
-        <p class="lede reveal">Stash is a tiny menu bar app for your references. It grabs the tab you're on — down to the second of the video — or the screenshot you just copied, and keeps it as plain Markdown on your Mac.</p>
+        <img class="hero-icon reveal" src="assets/icon.png" alt="The Stash app icon" data-i18n-attr="alt:hero.iconAlt" width="132" height="132">
+        <a class="news-pill reveal" href="#new" data-i18n="hero.news"><b>New in 0.3</b> Search the text in your images <span aria-hidden="true">&rarr;</span></a>
+        <h1 class="reveal" data-i18n="hero.title">Save anything in two keystrokes. <span class="dim">Find it again in one.</span></h1>
+        <p class="lede reveal" data-i18n="hero.lede">Stash is a tiny menu bar app for your references. It grabs the tab you're on — down to the second of the video — or the screenshot you just copied, and keeps it as plain Markdown on your Mac.</p>
         <div class="cta reveal">
           <a class="button" href="https://github.com/S4MU3LDemolidor/stash/releases/latest" data-download>
             <svg viewBox="0 0 384 512" aria-hidden="true"><path fill="currentColor" d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/></svg>
-            Download for Mac
+            <span data-i18n="hero.download">Download for Mac</span>
           </a>
           <a class="button button-ghost" href="#film">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M8 5.5v13a1 1 0 0 0 1.5.86l10.4-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5z"/></svg>
-            Watch the film
+            <span data-i18n="hero.watch">Watch the film</span>
           </a>
         </div>
-        <p class="meta reveal"><span data-version>Free</span> · macOS 14 or later · Apple Silicon &amp; Intel · Downloads from GitHub</p>
+        <p class="meta reveal"><span data-version data-i18n="hero.free">Free</span> · <span data-i18n="hero.meta">macOS 14 or later · Apple Silicon &amp; Intel · Downloads from GitHub</span></p>
       </div>
 
       <!-- Live demo of the app -->
       <div class="demo reveal" id="demo">
-        <div class="demo-tabs" role="tablist" aria-label="Stash, in action">
-          <button role="tab" aria-selected="true" data-tab="capture"><span class="tab-glyph">⤓</span>Capture<i class="tab-progress"></i></button>
-          <button role="tab" aria-selected="false" data-tab="library"><span class="tab-glyph">⌕</span>Library<i class="tab-progress"></i></button>
-          <button role="tab" aria-selected="false" data-tab="grid"><span class="tab-glyph">▦</span>Grid<i class="tab-progress"></i></button>
-          <button role="tab" aria-selected="false" data-tab="actions"><span class="tab-glyph">⌘</span>Actions<i class="tab-progress"></i></button>
+        <div class="demo-tabs" role="tablist" aria-label="Stash, in action" data-i18n-attr="aria-label:demo.tabs">
+          <button role="tab" aria-selected="true" data-tab="capture"><span class="tab-glyph">⤓</span><span data-i18n="demo.capture">Capture</span><i class="tab-progress"></i></button>
+          <button role="tab" aria-selected="false" data-tab="library"><span class="tab-glyph">⌕</span><span data-i18n="demo.library">Library</span><i class="tab-progress"></i></button>
+          <button role="tab" aria-selected="false" data-tab="grid"><span class="tab-glyph">▦</span><span data-i18n="demo.grid">Grid</span><i class="tab-progress"></i></button>
+          <button role="tab" aria-selected="false" data-tab="actions"><span class="tab-glyph">⌘</span><span data-i18n="demo.actions">Actions</span><i class="tab-progress"></i></button>
         </div>
         <div class="stage" data-stage>
           <div class="stage-inner" data-stage-inner>
@@ -102,158 +121,201 @@
                 <div class="video-progress"><span></span><b>4:32</b></div>
               </div>
             </div>
-            <div class="panel" data-panel data-mode="capture" role="img" aria-label="The Stash panel: capturing a YouTube video at 4:32 with a note and tags, then searching the library.">
+            <div class="panel" data-panel data-mode="capture" role="img" data-i18n-attr="aria-label:demo.panelLabel" aria-label="The Stash panel: capturing a YouTube video at 4:32 with a note and tags, then searching the library.">
               <!-- filled by demo.js -->
             </div>
-            <div class="hud" data-hud aria-hidden="true"><span class="hud-check">✓</span>Saved to Stash</div>
+            <div class="hud" data-hud aria-hidden="true"><span class="hud-check">✓</span><span data-i18n="demo.saved">Saved to Stash</span></div>
           </div>
         </div>
-        <p class="demo-hint"><kbd>⌥</kbd><kbd>⇧</kbd><kbd>S</kbd> to capture · <kbd>⌥</kbd><kbd>⇧</kbd><kbd>L</kbd> to find</p>
+        <p class="demo-hint" data-i18n="demo.hint"><kbd>⌥</kbd><kbd>⇧</kbd><kbd>S</kbd> to capture · <kbd>⌥</kbd><kbd>⇧</kbd><kbd>L</kbd> to find</p>
       </div>
     </section>
 
     <!-- Film -->
     <section class="film" id="film">
       <div class="section-head reveal">
-        <span class="eyebrow">The film</span>
-        <h2>Stash in 43 seconds.</h2>
+        <span class="eyebrow" data-i18n="film.eyebrow">The film</span>
+        <h2 data-i18n="film.title">Stash in 43 seconds.</h2>
       </div>
       <div class="film-frame reveal">
-        <video data-film src="assets/stash-film.mp4" poster="assets/stash-film-poster.jpg" controls muted playsinline loop preload="metadata" aria-label="A 43-second film showing Stash capturing and finding references"></video>
+        <video data-film src="assets/stash-film.mp4" poster="assets/stash-film-poster.jpg" controls muted playsinline loop preload="metadata" aria-label="A 43-second film showing Stash capturing and finding references" data-i18n-attr="aria-label:film.label"></video>
       </div>
-      <p class="aside reveal">Sound on for the full effect.</p>
+      <p class="aside reveal" data-i18n="film.aside">Sound on for the full effect. The film is in English.</p>
     </section>
 
     <!-- Statement -->
     <section class="statement">
-      <p class="reveal">Bookmarks you never open. Screenshots piling up on the desktop. Notes to yourself in a chat.</p>
-      <p class="reveal strong">Stash replaces all of it with two keystrokes.</p>
+      <p class="reveal" data-i18n="statement.1">Bookmarks you never open. Screenshots piling up on the desktop. Notes to yourself in a chat.</p>
+      <p class="reveal strong" data-i18n="statement.2">Stash replaces all of it with two keystrokes.</p>
     </section>
 
     <!-- Keyboard -->
     <section class="keyboard-section" id="keyboard">
       <div class="section-head reveal">
-        <span class="eyebrow">Keyboard first</span>
-        <h2>Take shortcuts. Keep everything.</h2>
-        <p>Every action has a key, and every key shows up when you need it.</p>
+        <span class="eyebrow" data-i18n="keyboard.eyebrow">Keyboard first</span>
+        <h2 data-i18n="keyboard.title">Take shortcuts. Keep everything.</h2>
+        <p data-i18n="keyboard.lead">Every action has a key, and every key shows up when you need it.</p>
       </div>
-      <div class="keyboard reveal" aria-label="Stash's main shortcuts">
+      <div class="keyboard reveal" aria-label="Stash's main shortcuts" data-i18n-attr="aria-label:keyboard.label">
         <div class="krow">
           <span class="key">esc</span><span class="key">1</span><span class="key">2</span><span class="key">3</span><span class="key">4</span><span class="key">5</span><span class="key">6</span><span class="key">7</span><span class="key">8</span><span class="key">9</span><span class="key">0</span><span class="key w2">delete</span>
         </div>
         <div class="krow">
           <span class="key w15">tab</span><span class="key">Q</span><span class="key">W</span>
-          <span class="key feature w4"><b>Fast.</b> Shortcut to saved in under a second.</span>
+          <span class="key feature w4" data-i18n="keyboard.fast"><b>Fast.</b> Shortcut to saved in under a second.</span>
           <span class="key">U</span><span class="key">I</span><span class="key">O</span><span class="key">P</span><span class="key w15">\</span>
         </div>
         <div class="krow">
           <span class="key w18">caps</span><span class="key">A</span><span class="key lit">S</span><span class="key">D</span><span class="key">F</span><span class="key">G</span>
-          <span class="key feature w3"><b>Instant search.</b> Every keystroke.</span>
+          <span class="key feature w3" data-i18n="keyboard.search"><b>Instant search.</b> Every keystroke.</span>
           <span class="key lit-soft">L</span><span class="key w22">return ↵</span>
         </div>
         <div class="krow">
           <span class="key lit w24">⇧ shift</span><span class="key">Z</span><span class="key">X</span><span class="key">C</span>
-          <span class="key feature w4"><b>Local.</b> Plain files, on your Mac.</span>
+          <span class="key feature w4" data-i18n="keyboard.local"><b>Local.</b> Plain files, on your Mac.</span>
           <span class="key">M</span><span class="key w26">shift ⇧</span>
         </div>
         <div class="krow">
           <span class="key">fn</span><span class="key w12">control</span><span class="key lit w12">⌥<small>option</small></span><span class="key w15">⌘<small>command</small></span>
-          <span class="key feature w5"><b>Free.</b> Open source, MIT licensed.</span>
+          <span class="key feature w5" data-i18n="keyboard.free"><b>Free.</b> Open source, MIT licensed.</span>
           <span class="key w15">⌘<small>command</small></span><span class="key w12">⌥<small>option</small></span>
         </div>
       </div>
       <div class="shortcuts reveal">
-        <div><span class="keys"><kbd>⌥</kbd><kbd>⇧</kbd><kbd>S</kbd></span>Capture</div>
-        <div><span class="keys"><kbd>⌥</kbd><kbd>⇧</kbd><kbd>L</kbd></span>Library</div>
-        <div><span class="keys"><kbd>↵</kbd></span>Save · Open</div>
-        <div><span class="keys"><kbd>⌘</kbd><kbd>↵</kbd></span>Open at the timestamp</div>
-        <div><span class="keys"><kbd>⌘</kbd><kbd>K</kbd></span>Actions</div>
-        <div><span class="keys"><kbd>⌘</kbd><kbd>G</kbd></span>Grid</div>
+        <div><span class="keys"><kbd>⌥</kbd><kbd>⇧</kbd><kbd>S</kbd></span><span data-i18n="shortcuts.capture">Capture</span></div>
+        <div><span class="keys"><kbd>⌥</kbd><kbd>⇧</kbd><kbd>L</kbd></span><span data-i18n="shortcuts.library">Library</span></div>
+        <div><span class="keys"><kbd>↵</kbd></span><span data-i18n="shortcuts.saveOpen">Save · Open</span></div>
+        <div><span class="keys"><kbd>⌘</kbd><kbd>↵</kbd></span><span data-i18n="shortcuts.timestamp">Open at the timestamp</span></div>
+        <div><span class="keys"><kbd>⌘</kbd><kbd>K</kbd></span><span data-i18n="shortcuts.actions">Actions</span></div>
+        <div><span class="keys"><kbd>⌘</kbd><kbd>G</kbd></span><span data-i18n="shortcuts.grid">Grid</span></div>
       </div>
     </section>
 
     <!-- Shelf -->
     <section class="shelf-feature" id="shelf">
       <div class="shelf-copy reveal">
-        <span class="eyebrow">New in 0.2 · Shelf</span>
-        <h2>Shake to hold anything.</h2>
-        <p class="lead">Dragging something with nowhere to put it yet? Shake the mouse. A shelf appears under the cursor. Drop it there, go wherever you need, and drag it back out.</p>
+        <span class="eyebrow" data-i18n="shelf.eyebrow">Shelf</span>
+        <h2 data-i18n="shelf.title">Shake to hold anything.</h2>
+        <p class="lead" data-i18n="shelf.lead">Dragging something with nowhere to put it yet? Shake the mouse. A shelf appears under the cursor. Drop it there, go wherever you need, and drag it back out.</p>
         <ul>
-          <li><b>Anything you drag.</b> Files and folders, images from a web page, text, links.</li>
-          <li><b>Like finishing the drag.</b> Drop it in Finder and it moves, as if you never paused. Hold <kbd>⌥</kbd> to copy.</li>
-          <li><b>Nothing duplicated.</b> Files stay where they are; the shelf only points at them.</li>
-          <li><b>No setup.</b> No permissions to grant. Or just drop things on the menu bar icon.</li>
+          <li data-i18n="shelf.li1"><b>Anything you drag.</b> Files and folders, images from a web page, text, links.</li>
+          <li data-i18n="shelf.li2"><b>Like finishing the drag.</b> Drop it in Finder and it moves, as if you never paused. Hold <kbd>⌥</kbd> to copy.</li>
+          <li data-i18n="shelf.li3"><b>Nothing duplicated.</b> Files stay where they are; the shelf only points at them.</li>
+          <li data-i18n="shelf.li4"><b>No setup.</b> No permissions to grant. Or just drop things on the menu bar icon.</li>
         </ul>
       </div>
       <div class="shelf-stage reveal" aria-hidden="true">
-        <div class="fw fw-left"><div class="fw-bar"><span class="dots"><i></i><i></i><i></i></span><span>Downloads</span></div></div>
-        <div class="fw fw-right"><div class="fw-bar"><span class="dots"><i></i><i></i><i></i></span><span>Client · Final</span></div></div>
+        <div class="fw fw-left"><div class="fw-bar"><span class="dots"><i></i><i></i><i></i></span><span data-i18n="shelf.downloads">Downloads</span></div></div>
+        <div class="fw fw-right"><div class="fw-bar"><span class="dots"><i></i><i></i><i></i></span><span data-i18n="shelf.client">Client · Final</span></div></div>
         <div class="sf-file file-left"><span class="doc"></span><small>Brief.pdf</small></div>
         <div class="sf-file file-right"><span class="doc"></span><small>Brief.pdf</small></div>
         <div class="mini-shelf">
-          <div class="ms-head"><span>Shelf</span><b>&times;</b></div>
+          <div class="ms-head"><span data-i18n="shelf.name">Shelf</span><b>&times;</b></div>
           <div class="ms-item"><span class="doc"></span><small>Brief.pdf</small></div>
         </div>
-        <div class="shake-hint">shake</div>
+        <div class="shake-hint" data-i18n="shelf.shake">shake</div>
         <div class="sf-ghost"><span class="doc"></span></div>
         <svg class="sf-cursor" viewBox="0 0 24 24"><path d="M3 2.5v16.2l4.3-4.1 2.9 6.6 2.9-1.3-2.9-6.4h6.1z" fill="#0b0b0d" stroke="#fff" stroke-width="1.4" stroke-linejoin="round"/></svg>
+      </div>
+    </section>
+
+    <!-- New in 0.3 -->
+    <section class="whats-new" id="new">
+      <div class="section-head reveal">
+        <span class="eyebrow" data-i18n="new.eyebrow">New in 0.3</span>
+        <h2 data-i18n="new.title">It reads, it remembers,<br>it speaks your language.</h2>
+      </div>
+      <div class="new-grid">
+        <article class="card reveal">
+          <div class="card-art ocr" aria-hidden="true">
+            <div class="ocr-search"><span class="ocr-glass"></span><span class="typed">shipping</span></div>
+            <div class="ocr-image">
+              <i class="ocr-sun"></i>
+              <b>Black Friday</b>
+              <span class="ocr-sale">50% off everything</span>
+              <span class="ocr-hit">Free <mark>shipping</mark> · Ends Sunday</span>
+              <i class="ocr-scan"></i>
+            </div>
+          </div>
+          <h3 data-i18n="new.ocrTitle">Search the text in images</h3>
+          <p data-i18n="new.ocrText">Screenshots and ad creatives are found by what they say. The text is read on your Mac, never uploaded.</p>
+        </article>
+        <article class="card reveal">
+          <div class="card-art dup" aria-hidden="true">
+            <div class="dup-card"><span class="dup-thumb"></span><span class="dup-lines"><b>How I Write Hooks</b><small>youtube.com · <span data-i18n="new.dupAt">at 4:32</span></small></span></div>
+            <div class="dup-line"><i>⤳</i><span data-i18n="new.dupLine">Already saved 3 weeks ago</span> <em>#hooks</em></div>
+            <div class="dup-keys"><span class="dup-key primary"><span data-i18n="new.dupAdd">Add to Existing</span><kbd>↵</kbd></span><span class="dup-key"><span data-i18n="new.dupCopy">Save Copy</span><span><kbd>⌥</kbd><kbd>↵</kbd></span></span></div>
+          </div>
+          <h3 data-i18n="new.dupTitle">Already saved? It merges</h3>
+          <p data-i18n="new.dupText">The same link, the same moment of a video, the same image: <kbd>↵</kbd> adds your new note and tags to it instead of making a twin.</p>
+        </article>
+        <article class="card reveal">
+          <div class="card-art langs" aria-hidden="true">
+            <span lang="en">Saved to Stash</span>
+            <span lang="pt-BR">Salvo no Stash</span>
+            <span lang="es">Guardado en Stash</span>
+            <span lang="fr">Enregistré dans Stash</span>
+          </div>
+          <h3 data-i18n="new.langTitle">In your language</h3>
+          <p data-i18n="new.langText">English, Português, Español and Français. Stash follows your Mac, and so does this page.</p>
+        </article>
       </div>
     </section>
 
     <!-- Features -->
     <section class="features" id="features">
       <div class="section-head reveal">
-        <span class="eyebrow">Features</span>
-        <h2>Everything you save,<br>one shortcut away.</h2>
+        <span class="eyebrow" data-i18n="features.eyebrow">Features</span>
+        <h2 data-i18n="features.title">Everything you save,<br>one shortcut away.</h2>
       </div>
       <div class="bento">
         <article class="card wide reveal">
           <div class="card-art browsers">
             <span>Safari</span><span>Chrome</span><span class="on">Arc</span><span>Brave</span><span>Edge</span>
           </div>
-          <h3>It already knows what you're looking at</h3>
-          <p>Press the shortcut on any tab and it's in the card — title, site, ready to save. Copied an image instead? That wins.</p>
+          <h3 data-i18n="features.tabTitle">It already knows what you're looking at</h3>
+          <p data-i18n="features.tabText">Press the shortcut on any tab and it's in the card — title, site, ready to save. Copied an image instead? That wins.</p>
         </article>
         <article class="card reveal">
           <div class="card-art scrubber" aria-hidden="true"><span class="track"><span class="played"></span><span class="knob"></span></span><code>&amp;t=272s</code></div>
-          <h3>The exact second</h3>
-          <p>Saving a YouTube video keeps the moment you were at. Open it later and it plays from 4:32.</p>
+          <h3 data-i18n="features.secondTitle">The exact second</h3>
+          <p data-i18n="features.secondText">Saving a YouTube video keeps the moment you were at. Open it later and it plays from 4:32.</p>
         </article>
         <article class="card reveal">
           <div class="card-art types" aria-hidden="true">
-            <span><i>🔗</i>Link</span><span><i>❝</i>Text</span><span><i>▣</i>Image</span><span><i>▤</i>File</span>
+            <span><i>🔗</i><span data-i18n="features.typeLink">Link</span></span><span><i>❝</i><span data-i18n="features.typeText">Text</span></span><span><i>▣</i><span data-i18n="features.typeImage">Image</span></span><span><i>▤</i><span data-i18n="features.typeFile">File</span></span>
           </div>
-          <h3>Anything, really</h3>
-          <p>Links, quotes, screenshots, ad creatives, PDFs. Paste or drop it; Stash works out what it is.</p>
+          <h3 data-i18n="features.anythingTitle">Anything, really</h3>
+          <p data-i18n="features.anythingText">Links, quotes, screenshots, ad creatives, PDFs. Paste or drop it; Stash works out what it is.</p>
         </article>
         <article class="card reveal">
           <div class="card-art tags" aria-hidden="true">
-            <div class="mini-input">great hook <b>#ho</b><i class="caret"></i></div>
+            <div class="mini-input"><span data-i18n="features.tagNote">great hook</span> <b>#ho</b><i class="caret"></i></div>
             <div class="mini-suggest"><span class="sel">#hooks</span><span>#home-pages</span></div>
           </div>
-          <h3>#tags as you type</h3>
-          <p>Add a note with inline tags. The ones you use most come up first; <kbd>⇥</kbd> completes.</p>
+          <h3 data-i18n="features.tagsTitle">#tags as you type</h3>
+          <p data-i18n="features.tagsText">Add a note with inline tags. The ones you use most come up first; <kbd>⇥</kbd> completes.</p>
         </article>
         <article class="card reveal">
           <div class="card-art mosaic" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div>
-          <h3>A moodboard, too</h3>
-          <p><kbd>⌘</kbd><kbd>G</kbd> turns your library into a grid for browsing when you need inspiration, not a search.</p>
+          <h3 data-i18n="features.gridTitle">A moodboard, too</h3>
+          <p data-i18n="features.gridText"><kbd>⌘</kbd><kbd>G</kbd> turns your library into a grid for browsing when you need inspiration, not a search.</p>
         </article>
         <article class="card reveal">
           <div class="card-art sync" aria-hidden="true"><span>iCloud Drive</span><span class="sep">›</span><span class="on">Stash</span></div>
-          <h3>On every Mac</h3>
-          <p>Keep the library in iCloud Drive, Dropbox or Syncthing. No Stash server involved.</p>
+          <h3 data-i18n="features.syncTitle">On every Mac</h3>
+          <p data-i18n="features.syncText">Keep the library in iCloud Drive, Dropbox or Syncthing. No Stash server involved.</p>
         </article>
         <article class="card wide reveal">
           <div class="card-art search" aria-hidden="true">
-            <div class="mini-search"><span class="pill">#hooks ×</span><span class="pill">Images ×</span><span class="typed">black fri</span></div>
+            <div class="mini-search"><span class="pill">#hooks ×</span><span class="pill" data-i18n="features.searchPill">Images ×</span><span class="typed">black fri</span></div>
             <div class="mini-results">
-              <div class="sel"><i class="sw sw-1"></i>Black Friday ad<small>Image · 1080×1350</small></div>
-              <div><i class="sw sw-2"></i>Holiday edit<small>Image · 1080×1080</small></div>
+              <div class="sel"><i class="sw sw-1"></i>Black Friday ad<small data-i18n="features.result1">Image · 1080×1350</small></div>
+              <div><i class="sw sw-2"></i>Holiday edit<small data-i18n="features.result2">Image · 1080×1080</small></div>
             </div>
           </div>
-          <h3>Find it in one</h3>
-          <p>Search titles, notes, tags, sites and the text inside saved PDFs — on every keystroke. Filter with <code>#tag</code> and <code>type:image</code>.</p>
+          <h3 data-i18n="features.findTitle">Find it in one</h3>
+          <p data-i18n="features.findText">Search titles, notes, tags, sites and the text inside saved PDFs and images — on every keystroke. Filter with <code>#tag</code> and <code>type:image</code>.</p>
         </article>
       </div>
     </section>
@@ -261,16 +323,16 @@
     <!-- Files -->
     <section class="files" id="files">
       <div class="files-copy reveal">
-        <span class="eyebrow">Your data is plain files</span>
-        <h2>If Stash disappears tomorrow, your library doesn't.</h2>
+        <span class="eyebrow" data-i18n="files.eyebrow">Your data is plain files</span>
+        <h2 data-i18n="files.title">If Stash disappears tomorrow, your library doesn't.</h2>
         <ul>
-          <li>Every reference is a Markdown file with a small header.</li>
-          <li>Opens in Obsidian or any text editor — edits show up instantly.</li>
-          <li>Images and files sit next to them, named by ID.</li>
-          <li>The search index is just a cache, rebuilt from the files any time.</li>
+          <li data-i18n="files.li1">Every reference is a Markdown file with a small header.</li>
+          <li data-i18n="files.li2">Opens in Obsidian or any text editor — edits show up instantly.</li>
+          <li data-i18n="files.li3">Images and files sit next to them, named by ID.</li>
+          <li data-i18n="files.li4">The search index is just a cache, rebuilt from the files any time.</li>
         </ul>
       </div>
-      <div class="editor reveal" aria-label="A reference saved by Stash, as a Markdown file">
+      <div class="editor reveal" aria-label="A reference saved by Stash, as a Markdown file" data-i18n-attr="aria-label:files.editorLabel">
         <div class="editor-bar"><span class="dots"><i></i><i></i><i></i></span><span class="editor-tab">2026-10-14-great-hook-in-the-first-3s.md</span></div>
 <pre class="code"><span class="c-dim">---</span>
 <span class="c-key">id</span>: <span class="c-val">01JA8K3Q7Z2M4X5C6V7B8N9P0Q</span>
@@ -297,44 +359,44 @@ great hook in the first 3s</pre>
     <!-- Privacy -->
     <section class="privacy" id="privacy">
       <div class="section-head reveal">
-        <span class="eyebrow">Privacy</span>
-        <h2>No account. No server.<br>No tracking.</h2>
+        <span class="eyebrow" data-i18n="privacy.eyebrow">Privacy</span>
+        <h2 data-i18n="privacy.title">No account. No server.<br>No tracking.</h2>
       </div>
       <div class="privacy-grid">
         <article class="card reveal">
           <span class="privacy-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="5" width="16" height="11" rx="1.5"/><path d="M2 19h20"/></svg></span>
-          <h3>Stays on your Mac</h3>
-          <p>Your references never leave your computer. No analytics, no telemetry, no crash reporting — ever.</p>
+          <h3 data-i18n="privacy.localTitle">Stays on your Mac</h3>
+          <p data-i18n="privacy.localText">Your references never leave your computer, and the text in your images is read right there. No analytics, no telemetry, no crash reporting — ever.</p>
         </article>
         <article class="card reveal">
           <span class="privacy-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c2.4 2.4 3.5 5.2 3.5 8.5s-1.1 6.1-3.5 8.5c-2.4-2.4-3.5-5.2-3.5-8.5S9.6 5.9 12 3.5z"/></svg></span>
-          <h3>One kind of request</h3>
-          <p>The only network use: the title, thumbnail and icon of a link you save, from that site. One toggle turns it off.</p>
+          <h3 data-i18n="privacy.requestTitle">One kind of request</h3>
+          <p data-i18n="privacy.requestText">The only network use: the title, thumbnail and icon of a link you save, from that site. One toggle turns it off.</p>
         </article>
         <article class="card reveal">
           <span class="privacy-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="10.5" width="14" height="10" rx="2"/><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5"/></svg></span>
-          <h3>Never touches secrets</h3>
-          <p>The clipboard is read only when you capture, and anything your password manager marks private is skipped.</p>
+          <h3 data-i18n="privacy.secretsTitle">Never touches secrets</h3>
+          <p data-i18n="privacy.secretsText">The clipboard is read only when you capture, and anything your password manager marks private is skipped.</p>
         </article>
       </div>
-      <p class="aside reveal">This website doesn't track you either. No cookies, no analytics.</p>
+      <p class="aside reveal" data-i18n="privacy.aside">This website doesn't track you either. No cookies, no analytics.</p>
     </section>
 
     <!-- Open source -->
     <section class="oss" id="open-source">
       <div class="section-head reveal">
-        <span class="eyebrow">Open source</span>
-        <h2>Free. Open source. Yours to change.</h2>
-        <p>MIT licensed, built with Swift, SwiftUI and AppKit. Read the code, open an issue, or build it yourself.</p>
+        <span class="eyebrow" data-i18n="oss.eyebrow">Open source</span>
+        <h2 data-i18n="oss.title">Free. Open source. Yours to change.</h2>
+        <p data-i18n="oss.lead">MIT licensed, built with Swift, SwiftUI and AppKit. Read the code, open an issue, or build it yourself.</p>
       </div>
       <div class="oss-row">
         <a class="repo card reveal" href="https://github.com/S4MU3LDemolidor/stash">
           <span class="repo-name">S4MU3LDemolidor / <b>stash</b></span>
-          <span class="repo-desc">Save anything in two keystrokes. Find it again in one.</span>
-          <span class="repo-meta"><span><i class="lang"></i>Swift</span><span>MIT</span><span data-stars-full>★ Star</span></span>
+          <span class="repo-desc" data-i18n="oss.repoDesc">Save anything in two keystrokes. Find it again in one.</span>
+          <span class="repo-meta"><span><i class="lang"></i>Swift</span><span>MIT</span><span data-stars-full data-i18n="oss.star">★ Star</span></span>
         </a>
         <div class="terminal card reveal">
-          <div class="terminal-bar"><span>Build from source</span><button type="button" class="copy" data-copy="git clone https://github.com/S4MU3LDemolidor/stash.git&#10;cd stash&#10;scripts/run.sh">Copy</button></div>
+          <div class="terminal-bar"><span data-i18n="oss.build">Build from source</span><button type="button" class="copy" data-i18n="oss.copy" data-copy="git clone https://github.com/S4MU3LDemolidor/stash.git&#10;cd stash&#10;scripts/run.sh">Copy</button></div>
 <pre><span class="c-dim">$</span> git clone https://github.com/S4MU3LDemolidor/stash.git
 <span class="c-dim">$</span> cd stash
 <span class="c-dim">$</span> scripts/run.sh</pre>
@@ -346,24 +408,29 @@ great hook in the first 3s</pre>
     <section class="final">
       <div class="final-glow" aria-hidden="true"></div>
       <img class="final-icon reveal" src="assets/icon.png" alt="" width="112" height="112">
-      <h2 class="reveal">Start stashing.</h2>
-      <p class="reveal">Free and open source, for everyone.</p>
+      <h2 class="reveal" data-i18n="final.title">Start stashing.</h2>
+      <p class="reveal" data-i18n="final.lead">Free and open source, for everyone.</p>
       <div class="cta reveal">
-        <a class="button" href="https://github.com/S4MU3LDemolidor/stash/releases/latest" data-download>Download for Mac</a>
+        <a class="button" href="https://github.com/S4MU3LDemolidor/stash/releases/latest" data-download data-i18n="final.download">Download for Mac</a>
       </div>
-      <p class="meta reveal"><span data-version>Free</span> · macOS 14 or later</p>
+      <div class="brew reveal">
+        <span class="brew-label" data-i18n="final.brew">or with Homebrew</span>
+        <code>brew install --cask s4mu3ldemolidor/tap/stash-references</code>
+        <button type="button" class="copy" data-i18n="oss.copy" data-copy="brew install --cask s4mu3ldemolidor/tap/stash-references">Copy</button>
+      </div>
+      <p class="meta reveal"><span data-version data-i18n="hero.free">Free</span> · <span data-i18n="final.meta">macOS 14 or later</span></p>
     </section>
   </main>
 
   <footer class="footer">
     <div class="footer-brand"><img src="assets/mark.png" alt="" width="16" height="18"><span>Stash</span></div>
-    <nav aria-label="Footer">
+    <nav aria-label="Footer" data-i18n-attr="aria-label:footer.label">
       <a href="https://github.com/S4MU3LDemolidor/stash">GitHub</a>
-      <a href="https://github.com/S4MU3LDemolidor/stash/releases">Releases</a>
-      <a href="https://github.com/S4MU3LDemolidor/stash#readme">Docs</a>
-      <a href="https://github.com/S4MU3LDemolidor/stash/blob/main/LICENSE">MIT License</a>
+      <a href="https://github.com/S4MU3LDemolidor/stash/releases" data-i18n="footer.releases">Releases</a>
+      <a href="https://github.com/S4MU3LDemolidor/stash#readme" data-i18n="footer.docs" data-i18n-attr="href:footer.docsURL">Docs</a>
+      <a href="https://github.com/S4MU3LDemolidor/stash/blob/main/LICENSE" data-i18n="footer.license">MIT License</a>
     </nav>
-    <span class="footer-note">Made for macOS. Your references never leave your Mac.</span>
+    <span class="footer-note" data-i18n="footer.note">Made for macOS. Your references never leave your Mac.</span>
   </footer>
 
   <script src="scripts/demo.js" defer></script>

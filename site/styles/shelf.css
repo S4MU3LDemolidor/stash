@@ -47,6 +47,7 @@
   color: #241503;
   font-size: 12px;
   font-weight: 600;
+  white-space: nowrap;
 }
 .news-pill:hover { color: var(--text); border-color: rgba(245, 165, 36, 0.5); }
 

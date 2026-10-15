@@ -2,6 +2,9 @@
 // straight at the latest release's .dmg on GitHub.
 (() => {
   const REPO = "S4MU3LDemolidor/stash";
+  // Translated pages carry their strings (see site/i18n/build.py); English is the fallback.
+  const STRINGS = window.STASH_I18N || {};
+  const tr = (text) => STRINGS[text] ?? text;
 
   // Nav gets a glass background once the page scrolls.
   const nav = document.querySelector(".nav");
@@ -33,17 +36,52 @@
     }, { threshold: 0.5 }).observe(film);
   }
 
-  // Copy the build-from-source commands.
+  // Copy buttons (build from source, Homebrew).
   for (const button of document.querySelectorAll("[data-copy]")) {
+    const label = button.textContent;
     button.addEventListener("click", async () => {
       try {
         await navigator.clipboard.writeText(button.dataset.copy);
-        button.textContent = "Copied";
+        button.textContent = tr("Copied");
       } catch {
-        button.textContent = "Select and copy";
+        button.textContent = tr("Select and copy");
       }
-      setTimeout(() => (button.textContent = "Copy"), 1600);
+      setTimeout(() => (button.textContent = label), 1600);
     });
+  }
+
+  // Language menu: closes on outside click or Esc.
+  const langMenu = document.querySelector("[data-lang-menu]");
+  if (langMenu) {
+    document.addEventListener("click", (e) => { if (!langMenu.contains(e.target)) langMenu.open = false; });
+    document.addEventListener("keydown", (e) => { if (e.key === "Escape") langMenu.open = false; });
+  }
+
+  // Offer the visitor's language once, in that language. Never redirects.
+  const OFFERS = {
+    en: "This page is also in English",
+    "pt-br": "Esta página também está em português",
+    es: "Esta página también está en español",
+    fr: "Cette page existe aussi en français",
+  };
+  const pageLanguage = document.documentElement.lang.toLowerCase();
+  const wanted = (navigator.languages || [navigator.language]).map((l) => l.toLowerCase())
+    .map((l) => (l.startsWith("pt") ? "pt-br" : l.slice(0, 2)))
+    .find((l) => l in OFFERS);
+  let dismissed = false;
+  try { dismissed = localStorage.getItem("stash-language-offer") === "dismissed"; } catch {}
+  const target = wanted && document.querySelector(`[data-lang="${wanted}"]`);
+  if (target && !pageLanguage.startsWith(wanted.slice(0, 2)) && !dismissed) {
+    const offer = document.createElement("div");
+    offer.className = "lang-offer";
+    offer.lang = target.lang;
+    offer.innerHTML = `<a href="${target.getAttribute("href")}">${OFFERS[wanted]} <span aria-hidden="true">&rarr;</span></a><button type="button" aria-label="Close">&times;</button>`;
+    offer.querySelector("button").addEventListener("click", () => {
+      offer.remove();
+      try { localStorage.setItem("stash-language-offer", "dismissed"); } catch {}
+    });
+    document.body.append(offer);
+    requestAnimationFrame(() => offer.classList.add("show"));
   }
 
   // Download buttons already link to the latest release page. When GitHub answers, point them
