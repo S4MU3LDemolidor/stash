@@ -40,6 +40,7 @@ Sources/Stash/
   Storage/      Markdown codec, library folder, sync, file watching, search index (GRDB + FTS5)
   Enrichment/   YouTube URLs, link metadata, background enrichment
   Settings/     preferences and the Settings window
+  Shelf/        the shake-to-open shelf: shake detection, storage, window
   Design/       Tokens.swift (every color, font, size and duration) and StashMark.swift (the logo mark)
 Tests/StashTests/
 ```

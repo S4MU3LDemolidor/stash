@@ -65,6 +65,9 @@ makes saving take two keystrokes and finding take one, and keeps everything as f
   made elsewhere show up instantly.
 - **Your folder, anywhere**: keep the library in iCloud Drive, Dropbox or Syncthing to use it on
   several Macs.
+- **Shelf**: while dragging anything (files, folders, images, text, links), shake the mouse and
+  a shelf appears under the cursor. Drop it there, go wherever you need, and drag it back out
+  later. You can also drop things on the menu bar icon.
 - **Native**: light and dark mode, VoiceOver, Reduce Motion and Reduce Transparency.
 
 ## Install
@@ -98,6 +101,18 @@ Requires macOS 14 Sonoma or later. To start Stash automatically, turn on **Setti
 Press `⌥⇧L`, type to search, `↑ ↓` to move, `↵` to open. `#tag` and `type:` become filter pills
 (`⌫` in an empty field removes the last one). No results? `↵` saves your search as a note.
 
+### Shelf
+
+1. Start dragging something: a file in Finder, an image or a link in your browser, some text.
+2. Shake the mouse left and right. A shelf appears under the cursor; let go onto it.
+3. Later, drag the stack out to take everything, or click it and drag single items.
+
+Dragging out works like finishing the original drag: Finder moves a file within the same disk
+and copies it to another one. Hold `⌥` to copy and keep it on the shelf too. The shelf stays on
+screen while it holds anything (also after a restart), and `×` clears it. Files on the shelf
+are references to the originals, never copies, so big videos cost nothing. Dropping things on
+the menu bar icon also puts them on the shelf. Turn shaking off in **Settings › Shelf**.
+
 ### Keyboard
 
 | Key | Capture | Library |
@@ -121,8 +136,8 @@ Both global shortcuts can be changed in **Settings › Shortcuts**.
 ### Settings
 
 Shortcuts · library folder (choose, reveal, rebuild index) · fetch titles & thumbnails ·
-how recently copied things are offered (30 s, 1 min, 5 min, off) · launch at login · show the
-menu bar icon. If you hide the icon, open Stash again from Finder or Spotlight to get back to
+how recently copied things are offered (30 s, 1 min, 5 min, off) · shake to open the shelf ·
+launch at login · show the menu bar icon. If you hide the icon, open Stash again from Finder or Spotlight to get back to
 Settings.
 
 ## Permissions
@@ -152,6 +167,10 @@ Stash does not need Accessibility, Screen Recording, Full Disk Access or any oth
   the site itself (for YouTube: its public oEmbed endpoint and thumbnail images). No cookies are
   sent or kept. Turn it off in **Settings › Capture › Fetch titles & thumbnails** and Stash makes
   no network requests at all.
+- **The shelf** stays on your Mac too: files are kept as references to the originals, and
+  dragged images, text and links as small private copies in
+  `~/Library/Application Support/Stash/Shelf/`. It never touches your library or the network,
+  and Stash never moves or deletes an original itself.
 - **The clipboard** is only read when you open Capture, and only if you copied something
   recently. Anything a password manager marks as secret is never captured, and things you copy
   from Stash itself aren't offered back.
@@ -168,6 +187,7 @@ Stash does not need Accessibility, Screen Recording, Full Disk Access or any oth
 
 ~/Library/Application Support/Stash/
   index.sqlite                ← search index; a cache, rebuilt from the files at any time
+  Shelf/                      ← what's on the shelf (shelf.json + private copies in Items/)
 ```
 
 Each reference is a Markdown file with a small header:
@@ -249,6 +269,7 @@ Sources/Stash/
   Storage/      Markdown files, folder sync, search index (GRDB + FTS5)
   Enrichment/   YouTube, titles and thumbnails
   Settings/     preferences and the Settings window
+  Shelf/        the shake-to-open shelf
   Design/       design tokens and the Stash mark
 Support/        Info.plist, entitlements, app icon
 docs/           brand assets and screenshots
