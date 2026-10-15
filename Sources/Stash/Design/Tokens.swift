@@ -155,6 +155,8 @@ enum Metrics {
     static let actionRowHeight: CGFloat = 32
     static let actionSearchHeight: CGFloat = 40
     static let detailMediaMaxHeight: CGFloat = 200
+    /// Lines of an image's text shown before "…" (⌘K copies all of it).
+    static let detailImageTextLines = 12
     static let detailFileIconSize: CGFloat = 64
     static let selectionRingWidth: CGFloat = 2
     static let selectionRingOpacity: CGFloat = 0.2

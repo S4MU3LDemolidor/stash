@@ -29,6 +29,13 @@ extension LibraryController {
             LibraryAction(id: "copy", title: copyTitle(for: reference), symbol: "doc.on.doc", keys: ["⌘", "C"]) { [weak self] in
                 self?.copy(reference)
             },
+        ]
+        if reference.type == .image, let text = try? library?.index.fileText(id: reference.id) {
+            actions.append(LibraryAction(id: "copyImageText", title: String(localized: "Copy Text in Image"), symbol: "text.viewfinder", keys: []) { [weak self] in
+                self?.copyText(text)
+            })
+        }
+        actions += [
             LibraryAction(id: "edit", title: "Edit Note & Tags", symbol: "pencil", keys: ["⌘", "E"]) { [weak self] in
                 self?.beginEdit()
             },
@@ -144,6 +151,16 @@ extension LibraryController {
             pasteboard.writeObjects(objects)
         }
         // Don't offer what we just copied as the next capture.
+        ClipboardMonitor.shared.ignoreCurrentContents()
+        onDismiss?()
+        HUDController.shared.show(.copied)
+    }
+
+    /// Plain text, e.g. what an image says.
+    func copyText(_ text: String) {
+        let pasteboard = NSPasteboard.general
+        pasteboard.clearContents()
+        pasteboard.setString(text, forType: .string)
         ClipboardMonitor.shared.ignoreCurrentContents()
         onDismiss?()
         HUDController.shared.show(.copied)

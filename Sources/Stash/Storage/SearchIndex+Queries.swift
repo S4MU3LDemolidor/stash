@@ -107,6 +107,29 @@ extension SearchIndex {
         }
     }
 
+    // MARK: Text inside images
+
+    /// Images whose text hasn't been read yet, newest first. Read images without text have "".
+    func imagesNeedingText(limit: Int = 20) throws -> [Reference] {
+        try db.read { db in
+            try Row.fetchAll(db, sql: """
+                SELECT * FROM reference
+                WHERE type = 'image' AND file IS NOT NULL AND fileText IS NULL
+                ORDER BY created DESC
+                LIMIT ?
+                """, arguments: [limit]
+            ).compactMap(Self.reference(from:))
+        }
+    }
+
+    /// The text read from a reference's image or file; nil when there's none (or not yet).
+    func fileText(id: String) throws -> String? {
+        let text = try db.read { db in
+            try String.fetchOne(db, sql: "SELECT fileText FROM reference WHERE id = ?", arguments: [id])
+        }
+        return text?.isEmpty == false ? text : nil
+    }
+
     static func reference(from row: Row) -> Reference? {
         guard let type = ReferenceType(rawValue: row["type"]) else { return nil }
         let tags: String = row["tags"]

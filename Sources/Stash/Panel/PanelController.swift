@@ -10,6 +10,7 @@ final class PanelController: NSObject {
     let capture = CaptureController()
     let libraryController = LibraryController()
     let enricher = Enricher()
+    let imageText = ImageTextIndexer()
 
     var library: LibraryStore? {
         didSet {
@@ -17,6 +18,7 @@ final class PanelController: NSObject {
             capture.enricher = enricher
             libraryController.library = library
             enricher.library = library
+            imageText.library = library
             MetadataFetcher.shared.hasSiteIcon = { [weak library] site in library?.siteIconURL(for: site) != nil }
         }
     }
@@ -189,6 +191,7 @@ final class PanelController: NSObject {
             capture: capture,
             library: libraryController,
             enricher: enricher,
+            imageText: imageText,
             onCommand: { [weak self] command in self?.handle(command) ?? false },
             onMenuCommand: { [weak self] command in self?.handleMenu(command) ?? false },
             onClick: { [weak self] reference in self?.handleClick(reference) }

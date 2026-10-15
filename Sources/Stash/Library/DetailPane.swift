@@ -25,6 +25,9 @@ struct DetailPane: View {
                         .foregroundStyle(Palette.textSecondary)
                         .fixedSize(horizontal: false, vertical: true)
                 }
+                if reference.type == .image, let text = assets.imageText(reference.id) {
+                    imageText(text)
+                }
                 metadata
                     .padding(.top, Metrics.unit)
             }
@@ -81,6 +84,22 @@ struct DetailPane: View {
                     .font(.system(size: Metrics.emptyIconSize))
                     .foregroundStyle(Palette.textTertiary)
             }
+    }
+
+    /// What the image says (read on this Mac), selectable. ⌘K copies all of it.
+    private func imageText(_ text: String) -> some View {
+        VStack(alignment: .leading, spacing: Metrics.unit) {
+            Text("Text in Image")
+                .font(Typography.detailBody)
+                .foregroundStyle(Palette.textTertiary)
+            Text(text)
+                .font(Typography.detailBody)
+                .foregroundStyle(Palette.textSecondary)
+                .lineLimit(Metrics.detailImageTextLines)
+                .truncationMode(.tail)
+                .fixedSize(horizontal: false, vertical: true)
+                .textSelection(.enabled)
+        }
     }
 
     // MARK: Details

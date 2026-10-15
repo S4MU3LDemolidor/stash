@@ -6,6 +6,8 @@ struct PanelRootView: View {
     @ObservedObject var capture: CaptureController
     @ObservedObject var library: LibraryController
     @ObservedObject var enricher: Enricher
+    /// Observed so the detail pane shows an image's text as soon as it's read.
+    @ObservedObject var imageText: ImageTextIndexer
     let onCommand: (PanelKeyCommand) -> Bool
     let onMenuCommand: (PanelKeyCommand) -> Bool
     let onClick: (Reference) -> Void
@@ -97,7 +99,8 @@ struct PanelRootView: View {
         return LibraryAssets(
             assetURL: { store?.url(for: $0) ?? URL(fileURLWithPath: $0) },
             siteIconURL: { store?.siteIconURL(for: $0) },
-            isLoading: { loading.contains($0) }
+            isLoading: { loading.contains($0) },
+            imageText: { id in try? store?.index.fileText(id: id) }
         )
     }
 }
